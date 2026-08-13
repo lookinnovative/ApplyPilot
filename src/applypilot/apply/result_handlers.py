@@ -199,6 +199,7 @@ HITL_AUTO_ROUTE: frozenset[str] = frozenset({
     "account_required",
     "sso_required",
     "email_verification",
+    "email_application",  # apply-by-email; SEND is not on the ATS/browser worker
     "resume_upload_blocked",
     "stuck",
 })

@@ -200,6 +200,13 @@ def _run_mini_task(worker_id: int, cdp_port: int, instructions: str) -> subproce
     )
 
     mcp_config_path = config.APP_DIR / f".mcp-apply-{worker_id}.json"
+    settings_path = config.APP_DIR / f".claude-apply-settings-{worker_id}.json"
+    write_apply_claude_settings(settings_path)
+    cmd = build_claude_apply_command(
+        model="sonnet",
+        mcp_config_path=mcp_config_path,
+        settings_path=settings_path,
+    )
 
     env = os.environ.copy()
     env.pop("ANTHROPIC_API_KEY", None)
@@ -207,17 +214,7 @@ def _run_mini_task(worker_id: int, cdp_port: int, instructions: str) -> subproce
     env.pop("CLAUDE_CODE_ENTRYPOINT", None)
 
     proc = subprocess.Popen(
-        [
-            "claude",
-            "--model", "sonnet",
-            "-p",
-            "--mcp-config", str(mcp_config_path),
-            "--strict-mcp-config",
-            "--permission-mode", "bypassPermissions",
-            "--no-session-persistence",
-            "--output-format", "stream-json",
-            "--verbose", "-",
-        ],
+        cmd,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -1387,6 +1384,257 @@ def _make_mcp_config(cdp_port: int, worker_id: int = 0) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Claude Code least-privilege execution boundary (WP1.1)
+# ---------------------------------------------------------------------------
+# Official Anthropic docs (code.claude.com):
+#   - bypassPermissions: skip prompts; only for isolated containers/VMs
+#   - dontAsk: auto-deny unless pre-approved via permissions.allow / --allowedTools
+#   - --tools: restrict which *built-in* tools are available (MCP unaffected)
+#   - --strict-mcp-config: only MCP servers from --mcp-config
+#   - deny rules take precedence over allow; bare tool names remove tools
+# Do NOT use --bare here: bare mode skips subscription/keychain auth and would
+# force API-key billing, conflicting with the Max-plan subprocess model.
+
+_APPLY_PERMISSION_MODE = "dontAsk"
+
+# Normal ATS/browser apply worker MCP allowlist.
+# Playwright: browser automation for form fill/upload (except browser_install).
+# Gmail: READ-only tools required for account/OTP verification during apply.
+#
+# PRODUCT NOTE (PRD §16 / Autonomy §13): ApplyPilot must ultimately support
+# outbound SEND for email-as-application, outreach, and follow-up via a
+# *separate* controlled Outbound Job-Search Communications capability.
+# That SEND authority must NOT live on this normal ATS/browser worker.
+_APPLY_ALLOWED_PLAYWRIGHT_TOOLS = (
+    "mcp__playwright__*",
+)
+
+# Actual tool names from @gongrzhe/server-gmail-autoauth-mcp@1.1.11 used for
+# verification in the apply prompt (search_emails / read_email).
+_APPLY_ALLOWED_GMAIL_READ_TOOLS = (
+    "mcp__gmail__search_emails",
+    "mcp__gmail__read_email",
+)
+
+_APPLY_ALLOWED_MCP_TOOLS = (
+    *_APPLY_ALLOWED_PLAYWRIGHT_TOOLS,
+    *_APPLY_ALLOWED_GMAIL_READ_TOOLS,
+)
+
+# Built-ins the apply worker must not see. Bare deny names remove them from
+# Claude's tool context (permissions docs). PowerShell is denied explicitly
+# because Windows can expose it alongside Bash.
+_APPLY_DENIED_BUILTIN_TOOLS = (
+    "Bash",
+    "PowerShell",
+    "Edit",
+    "Write",
+    "NotebookEdit",
+    "Glob",
+    "Grep",
+    "Agent",
+    "WebFetch",
+    "WebSearch",
+)
+
+# Gmail mutation/outbound tools from @gongrzhe/server-gmail-autoauth-mcp@1.1.11.
+# Explicit deny is belt-and-suspenders with the narrow READ allowlist above.
+# send_email is denied here — product SEND belongs to the future outbound
+# communications capability, not this worker.
+_APPLY_DENIED_GMAIL_MUTATION_TOOLS = (
+    "mcp__gmail__send_email",
+    "mcp__gmail__draft_email",
+    "mcp__gmail__modify_email",
+    "mcp__gmail__delete_email",
+    "mcp__gmail__download_attachment",
+    "mcp__gmail__batch_modify_emails",
+    "mcp__gmail__batch_delete_emails",
+    "mcp__gmail__create_label",
+    "mcp__gmail__update_label",
+    "mcp__gmail__delete_label",
+    "mcp__gmail__get_or_create_label",
+    "mcp__gmail__list_email_labels",
+    "mcp__gmail__create_filter",
+    "mcp__gmail__list_filters",
+    "mcp__gmail__get_filter",
+    "mcp__gmail__delete_filter",
+    "mcp__gmail__create_filter_from_template",
+)
+
+_APPLY_DENIED_MCP_TOOLS = (
+    # browser_install restarts the browser in CDP mode, breaking the session
+    "mcp__playwright__browser_install",
+    *_APPLY_DENIED_GMAIL_MUTATION_TOOLS,
+)
+
+# Tokens that must never appear in the normal apply worker allowlist.
+_APPLY_FORBIDDEN_ALLOW_TOKENS = (
+    "mcp__gmail__*",  # wildcard would re-grant SEND
+    "mcp__gmail__send_email",
+    "mcp__gmail__draft_email",
+)
+
+
+class ClaudePermissionBoundaryError(RuntimeError):
+    """Raised when the apply worker cannot establish a least-privilege Claude boundary.
+
+    Callers must fail closed — never fall back to bypassPermissions.
+    """
+
+
+def _apply_disallowed_tools() -> list[str]:
+    """Full deny list passed to Claude Code --disallowedTools."""
+    return list(_APPLY_DENIED_BUILTIN_TOOLS) + list(_APPLY_DENIED_MCP_TOOLS)
+
+
+def write_apply_claude_settings(path: Path) -> Path:
+    """Write a per-run Claude settings file enforcing dontAsk + deny rules.
+
+    Also sets disableBypassPermissionsMode so a broader user/project default
+    cannot re-enable unrestricted permissions for this session.
+    """
+    settings = {
+        "permissions": {
+            "defaultMode": _APPLY_PERMISSION_MODE,
+            "disableBypassPermissionsMode": "disable",
+            "allow": list(_APPLY_ALLOWED_MCP_TOOLS),
+            "deny": _apply_disallowed_tools(),
+        }
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(settings, indent=2), encoding="utf-8")
+    return path
+
+
+def validate_claude_apply_command(cmd: list[str]) -> None:
+    """Fail closed if the Claude argv is missing the WP1.1 boundary or is broad.
+
+    Raises:
+        ClaudePermissionBoundaryError: unrestricted or incomplete permission config.
+    """
+    if not cmd or cmd[0] != "claude":
+        raise ClaudePermissionBoundaryError(
+            "Apply worker Claude command must invoke the claude CLI"
+        )
+
+    # Exact CLI flags only — do not substring-scan unrelated values (paths/model).
+    for bad_flag in (
+        "--dangerously-skip-permissions",
+        "--allow-dangerously-skip-permissions",
+    ):
+        if bad_flag in cmd:
+            raise ClaudePermissionBoundaryError(
+                "Refusing to launch apply worker with unrestricted Claude "
+                f"permissions ({bad_flag})"
+            )
+
+    if "--strict-mcp-config" not in cmd:
+        raise ClaudePermissionBoundaryError(
+            "Apply worker Claude command must include --strict-mcp-config"
+        )
+    if "--mcp-config" not in cmd:
+        raise ClaudePermissionBoundaryError(
+            "Apply worker Claude command must include --mcp-config"
+        )
+    if "--permission-mode" not in cmd:
+        raise ClaudePermissionBoundaryError(
+            "Apply worker Claude command must set --permission-mode"
+        )
+    mode = cmd[cmd.index("--permission-mode") + 1]
+    if mode == "bypassPermissions":
+        raise ClaudePermissionBoundaryError(
+            "Refusing to launch apply worker with unrestricted Claude "
+            "permissions (bypassPermissions)"
+        )
+    if mode != _APPLY_PERMISSION_MODE:
+        raise ClaudePermissionBoundaryError(
+            f"Apply worker Claude permission mode must be {_APPLY_PERMISSION_MODE!r}, "
+            f"got {mode!r}"
+        )
+    if "--settings" not in cmd:
+        raise ClaudePermissionBoundaryError(
+            "Apply worker Claude command must supply --settings with deny/allow rules"
+        )
+    if "--tools" not in cmd:
+        raise ClaudePermissionBoundaryError(
+            "Apply worker Claude command must restrict built-in tools via --tools"
+        )
+    tools_val = cmd[cmd.index("--tools") + 1]
+    if tools_val != "":
+        raise ClaudePermissionBoundaryError(
+            "Apply worker Claude built-in tools must be disabled (--tools ''); "
+            f"got {tools_val!r}"
+        )
+    allowed_flag = "--allowedTools" if "--allowedTools" in cmd else None
+    if allowed_flag is None and "--allowed-tools" in cmd:
+        allowed_flag = "--allowed-tools"
+    if allowed_flag is None:
+        raise ClaudePermissionBoundaryError(
+            "Apply worker Claude command must pre-approve MCP tools via --allowedTools"
+        )
+    allowed_val = cmd[cmd.index(allowed_flag) + 1]
+    allowed_set = {t.strip() for t in allowed_val.split(",") if t.strip()}
+    for token in _APPLY_FORBIDDEN_ALLOW_TOKENS:
+        if token in allowed_set or token in allowed_val:
+            raise ClaudePermissionBoundaryError(
+                "Refusing to launch apply worker with prohibited Gmail SEND/write "
+                f"authority in allowlist ({token})"
+            )
+    for required in _APPLY_ALLOWED_GMAIL_READ_TOOLS:
+        if required not in allowed_set:
+            raise ClaudePermissionBoundaryError(
+                "Apply worker Claude allowlist missing required Gmail READ tool "
+                f"({required})"
+            )
+    if "mcp__playwright__*" not in allowed_set:
+        raise ClaudePermissionBoundaryError(
+            "Apply worker Claude allowlist must include Playwright MCP tools"
+        )
+    if "--disallowedTools" not in cmd and "--disallowed-tools" not in cmd:
+        raise ClaudePermissionBoundaryError(
+            "Apply worker Claude command must deny prohibited tools via --disallowedTools"
+        )
+    deny_flag = "--disallowedTools" if "--disallowedTools" in cmd else "--disallowed-tools"
+    denied_val = cmd[cmd.index(deny_flag) + 1]
+    if "mcp__gmail__send_email" not in denied_val:
+        raise ClaudePermissionBoundaryError(
+            "Apply worker Claude deny list must include mcp__gmail__send_email"
+        )
+
+
+def build_claude_apply_command(
+    *,
+    model: str,
+    mcp_config_path: Path | str,
+    settings_path: Path | str,
+) -> list[str]:
+    """Build the production Claude Code argv for an apply (or mini-task) worker.
+
+    Uses dontAsk + empty built-in --tools + MCP allowlist + deny rules.
+    Never emits bypassPermissions. Validated before return (fail closed).
+    """
+    cmd = [
+        "claude",
+        "--model", model,
+        "-p",
+        "--mcp-config", str(mcp_config_path),
+        "--strict-mcp-config",
+        "--permission-mode", _APPLY_PERMISSION_MODE,
+        "--settings", str(settings_path),
+        # Restrict built-in tools to none; MCP servers are unaffected by --tools.
+        # Resume/cover paths are uploaded via Playwright MCP, not local Read/Bash.
+        "--tools", "",
+        "--allowedTools", ",".join(_APPLY_ALLOWED_MCP_TOOLS),
+        "--disallowedTools", ",".join(_apply_disallowed_tools()),
+        "--no-session-persistence",
+        "--output-format", "stream-json",
+        "--verbose", "-",
+    ]
+    validate_claude_apply_command(cmd)
+    return cmd
+
+
+# ---------------------------------------------------------------------------
 # Database operations
 # ---------------------------------------------------------------------------
 
@@ -2057,35 +2305,11 @@ def run_job(job: dict, port: int, worker_id: int = 0,
     # Refresh Gmail token before writing MCP config (the MCP server doesn't auto-refresh)
     _refresh_gmail_token()
 
-    # Write per-worker MCP config
+    # Write per-worker MCP config (strict-mcp-config ignores global/Docker MCP)
     mcp_config_path = config.APP_DIR / f".mcp-apply-{worker_id}.json"
-    mcp_config_path.write_text(json.dumps(_make_mcp_config(port, worker_id=worker_id)), encoding="utf-8")
-
-    # Build claude command
-    cmd = [
-        "claude",
-        "--model", model,
-        "-p",
-        "--mcp-config", str(mcp_config_path),
-        "--strict-mcp-config",
-        "--permission-mode", "bypassPermissions",
-        "--no-session-persistence",
-        "--disallowedTools", ",".join([
-            # browser_install restarts the browser in CDP mode, breaking the session
-            "mcp__playwright__browser_install",
-            # Block Gmail write tools (read-only access for email verification)
-            "mcp__gmail__draft_email", "mcp__gmail__modify_email",
-            "mcp__gmail__delete_email", "mcp__gmail__download_attachment",
-            "mcp__gmail__batch_modify_emails", "mcp__gmail__batch_delete_emails",
-            "mcp__gmail__create_label", "mcp__gmail__update_label",
-            "mcp__gmail__delete_label", "mcp__gmail__get_or_create_label",
-            "mcp__gmail__list_email_labels", "mcp__gmail__create_filter",
-            "mcp__gmail__list_filters", "mcp__gmail__get_filter",
-            "mcp__gmail__delete_filter",
-        ]),
-        "--output-format", "stream-json",
-        "--verbose", "-",
-    ]
+    mcp_config_path.write_text(
+        json.dumps(_make_mcp_config(port, worker_id=worker_id)), encoding="utf-8"
+    )
 
     env = os.environ.copy()
     env.pop("CLAUDECODE", None)
@@ -2120,6 +2344,16 @@ def run_job(job: dict, port: int, worker_id: int = 0,
     proc = None
 
     try:
+        # Least-privilege Claude boundary (WP1.1). Fail closed — never fall
+        # back to bypassPermissions if settings/command construction fails.
+        settings_path = worker_dir / "claude-apply-settings.json"
+        write_apply_claude_settings(settings_path)
+        cmd = build_claude_apply_command(
+            model=model,
+            mcp_config_path=mcp_config_path,
+            settings_path=settings_path,
+        )
+
         proc = subprocess.Popen(
             cmd,
             stdin=subprocess.PIPE,

@@ -1,7 +1,7 @@
 # Job Agent Product Requirements
 
 **Document type:** Product Requirements Document (PRD)  
-**Authority class:** Owner-approved product requirements  
+**Authority class:** Founder-approved product requirements  
 **Status:** Approved — Authoritative  
 **Scope:** Defines *what* the ApplyPilot fork must ultimately do and what constitutes product success  
 **Does not define:** Implementation plans, architecture, engineering process, coding standards, vendor documentation summaries, or inherited ApplyPilot behavior as product truth  
@@ -13,11 +13,11 @@
 | Field | Value |
 |-------|--------|
 | Product | Personal autonomous AI job-search and job-application agent (ApplyPilot fork) |
-| Classification | OWNER-APPROVED PRODUCT REQUIREMENTS — Approved — Authoritative |
+| Classification | FOUNDER-APPROVED PRODUCT REQUIREMENTS — Approved — Authoritative |
 | Relationship to code | Current ApplyPilot implementation is evidence of the starting point, not the definition of the product |
-| Conflict rule | Where current implementation differs from these requirements, the requirement wins unless explicitly revised by the owner later |
+| Conflict rule | Where current implementation differs from these requirements, the requirement wins unless explicitly revised by the Founder later |
 | Change control | Future material changes to product requirements must be deliberate and documented |
-| Amendments | **2026-08-13** — Owner-approved product clarification: ATS Screening & Resume Optimization Intelligence (Gate 2 affirmative objective; pre-/post-tailor screening analysis; distinguish candidate fit from resume presentation; screening risk alone is not automatic disqualification). Status remains Approved — Authoritative. <br><br> **2026-08-13** — Owner-approved product clarification: Operator Console & Natural-Language Agent Control (owner-facing conversational operating interface; structured durable state as system of record; owner-reported offline outcomes; multi-source outcome evidence; application progression model; outcome-driven learning from exact submitted resume/JD pairs without fabricating causation). Status remains Approved — Authoritative. |
+| Amendments | **2026-08-13** — Founder-approved product clarification: ATS Screening & Resume Optimization Intelligence (Gate 2 affirmative objective; pre-/post-tailor screening analysis; distinguish candidate fit from resume presentation; screening risk alone is not automatic disqualification). Status remains Approved — Authoritative. <br><br> **2026-08-13** — Founder-approved product clarification: Operator Console & Natural-Language Agent Control (Founder-facing conversational operating interface; structured durable state as system of record; Founder-reported offline outcomes; multi-source outcome evidence; application progression model; outcome-driven learning from exact submitted resume/JD pairs without fabricating causation). Status remains Approved — Authoritative. <br><br> **2026-08-13** — Founder-approved product clarification (WP1.1 security review): Outbound Job-Search Communications as a first-class capability; separation of application-worker Gmail READ from outbound SEND; email-as-application channel with independent send verification; direct decision-maker outreach; managed follow-up; dry-run must not produce any external communication; autonomy/send authorization rules deferred to `AUTONOMY_AND_APPLICATION_POLICY.md`. Status remains Approved — Authoritative. |
 
 This document must **not** become an implementation plan, architecture specification, engineering-process document, coding-standard document, vendor-documentation summary, a copy of the inherited ApplyPilot README, a copy of Jobscan methodology, or a description limited by what the inherited code currently supports.
 
@@ -40,19 +40,20 @@ Its eventual closed-loop mission is:
 7. Truthfully tailor the resume for screening alignment and human review  
 8. Re-evaluate and validate the tailored resume (including post-tailor screening analysis)  
 9. Generate a cover letter when appropriate or required  
-10. Navigate the employer’s actual application process  
+10. Navigate the employer’s actual application process (including browser/ATS flows and email-as-application where directed)  
 11. Create/login to applicant accounts when appropriate  
 12. Answer screening questions  
-13. Submit the application  
-14. Independently verify submission  
-15. Monitor application-related email and other authorized outcome signals  
-16. Accept owner-reported offline outcomes through the Operator Console  
-17. Classify employer responses and application progression  
-18. Update application state  
-19. Learn from outcome evidence without fabricating causation  
-20. Allow the owner to query, instruct, and control the agent through the Operator Console  
-21. Replenish the pipeline  
-22. Continue  
+13. Submit the application through the appropriate channel  
+14. Independently verify submission (including verifiable send evidence for email applications)  
+15. Conduct authorized outbound job-search communications (application email, outreach, follow-up) under autonomy policy  
+16. Monitor application-related email and other authorized outcome signals  
+17. Accept Founder-reported offline outcomes through the Operator Console  
+18. Classify employer responses and application progression  
+19. Update application and communication state  
+20. Learn from outcome evidence without fabricating causation  
+21. Allow the Founder to query, instruct, and control the agent through the Operator Console  
+22. Replenish the pipeline  
+23. Continue  
 
 Routine human involvement should be minimal.
 
@@ -67,7 +68,7 @@ The system is **not** intended to be primarily:
 - a dashboard requiring individual approval of every job;
 - a browser macro;
 - an indiscriminate mass-application bot;
-- a product the owner must operate via Cursor, Claude Code, CLI, source-code editing, or direct database tools for routine use.  
+- a product the Founder must operate via Cursor, Claude Code, CLI, source-code editing, or direct database tools for routine use.  
 
 ---
 
@@ -124,11 +125,11 @@ The system must distinguish the target category from roles whose **substantive r
 
 ### 2.4 Known-good exemplars
 
-The product must support one or more owner-approved real job descriptions as known-good job exemplars / reference profiles.
+The product must support one or more Founder-approved real job descriptions as known-good job exemplars / reference profiles.
 
 Those exemplars should help the system understand what a genuinely strong target opportunity looks like semantically.
 
-The owner should be able to designate positive and negative targeting examples conversationally through the Operator Console (§18.10), with durable structured targeting evidence when appropriate.
+The Founder should be able to designate positive and negative targeting examples conversationally through the Operator Console (§18.10), with durable structured targeting evidence when appropriate.
 
 ---
 
@@ -219,7 +220,7 @@ Qualification must support:
 - semantic analysis of job responsibilities;  
 - candidate factual alignment;  
 - known-good job exemplars;  
-- owner-defined constraints.  
+- Founder-defined constraints.  
 
 The system must **not** inherit another developer’s score threshold, geography, company cap, target-role assumptions, or search strategy as product requirements.
 
@@ -401,7 +402,7 @@ If a legitimate screening weakness remains and can be corrected using verified c
 
 Jobscan numeric thresholds are **not** hard-coded into these product requirements unless explicitly approved later.
 
-Any future measurable ATS/screening score thresholds should be established only after baseline testing/evidence and owner approval.
+Any future measurable ATS/screening score thresholds should be established only after baseline testing/evidence and Founder approval.
 
 ---
 
@@ -518,7 +519,7 @@ It must not present speculation about hidden algorithms as established fact.
 
 Product terminology should prefer: ATS Screening & Resume Optimization Intelligence; automated screening; screening risk; screening alignment; screening optimization; observable screening signals.
 
-Do not make “ATS bias” the formal technical name of the capability. The owner may colloquially refer to the problem as ATS bias, but product documentation must distinguish measurable screening behavior from unverified claims about hidden algorithms.
+Do not make “ATS bias” the formal technical name of the capability. The Founder may colloquially refer to the problem as ATS bias, but product documentation must distinguish measurable screening behavior from unverified claims about hidden algorithms.
 
 ### 9.8 Application-form screening intelligence
 
@@ -603,6 +604,7 @@ The product must be capable of navigating real-world application workflows, incl
 - job-board application flows;  
 - employer career sites;  
 - ATS-hosted application systems;  
+- **email-as-application** when an employer or job posting directs candidates to apply by email (§16.4);  
 - account creation where appropriate;  
 - login;  
 - session reuse where appropriate;  
@@ -615,9 +617,26 @@ The product must be capable of navigating real-world application workflows, incl
 - checkboxes;  
 - required acknowledgements;  
 - validation errors;  
-- final submission.  
+- final submission through the appropriate channel.  
 
 The system must not assume every employer uses the same questions or workflow.
+
+Normal ATS/browser application execution does **not** inherently require outbound email-send authority. Narrow Gmail **read** capability for application execution is specified in §16.2. Outbound send authority is a distinct product capability (§16.3).
+
+### 11.1 Dry-run — no external communication
+
+When operating in dry-run / testing mode, ApplyPilot must **not** produce an external communication or externally consequential submission action.
+
+Dry-run must not:
+
+- click an ATS Submit / final Apply action that would submit an application;  
+- send an application email;  
+- send outreach;  
+- send follow-up;  
+- send recruiter / hiring-manager communication;  
+- perform another externally consequential communication action.  
+
+Dry-run may prepare, render, or preview the intended application or communication, but must **stop before external transmission** or irreversible external submission.
 
 ---
 
@@ -750,13 +769,15 @@ After intervention, the application should be capable of resuming where practica
 
 Reusable knowledge learned from intervention should be retained when appropriate and approved.
 
-The owner should not ordinarily need to inspect logs or invoke internal commands to discover that intervention is required.
+The Founder should not ordinarily need to inspect logs or invoke internal commands to discover that intervention is required.
 
 ---
 
 ## 15. Submission verification
 
 Clicking a Submit button is **not** sufficient evidence of successful application.
+
+Invoking an email-send action (or agent self-report such as “RESULT:APPLIED” after intending to send) is likewise **not** sufficient independent verification that an email application was successfully submitted.
 
 The product must independently establish and persist evidence that an application was successfully submitted.
 
@@ -767,7 +788,10 @@ Verification may ultimately use multiple signals, including:
 - confirmation identifier where available;  
 - application history/state where available;  
 - confirmation email;  
+- **verifiable evidence that an outbound application email was actually sent successfully** (for email-as-application);  
 - other reliable evidence.  
+
+For email-as-application (§16.4), the application must not be treated as **confirmed / verified submitted** until independent/verifiable send-success evidence exists. Attempted send without that evidence remains at most **attempted**.
 
 The system must distinguish:
 
@@ -777,9 +801,9 @@ The system must distinguish:
 
 ---
 
-## 16. Dedicated job-search email
+## 16. Dedicated job-search email and outbound communications
 
-The product will use a dedicated Gmail account for job-search/application activity rather than the operator’s general-purpose personal mailbox.
+The product will use a dedicated Gmail account for job-search/application activity rather than the Founder’s general-purpose personal mailbox.
 
 The same dedicated applicant email identity should be used consistently where appropriate across:
 
@@ -792,34 +816,195 @@ The same dedicated applicant email identity should be used consistently where ap
 - recruiter communications;  
 - assessments;  
 - interview invitations;  
-- application-status communications.  
+- application-status communications;  
+- authorized outbound job-search communications (§16.3).  
 
-Email access must be limited to permissions necessary for the approved job-application and tracking functions.
+Email access must be limited to permissions necessary for the approved job-application, tracking, and authorized outbound-communication functions.
 
-Actual Gmail connection/authentication architecture is **not** defined by this document and must be addressed later under security/implementation governance.
+Actual mailbox connection/authentication architecture and transport technology are **not** defined by this document and must be addressed later under security/implementation governance. Gmail is the initial dedicated mailbox identity; this PRD does **not** make Gmail the only possible future communications channel.
 
-Gmail/email tracking is an **automatic evidence source**. It is **not** the owner’s primary interface with the agent and is **not** the sole source of application outcomes. Owner-reported offline events and the Operator Console are specified in §18 and §19.
+Gmail/email tracking is an **automatic evidence source**. It is **not** the Founder’s primary interface with the agent and is **not** the sole source of application outcomes. Founder-reported offline events and the Operator Console are specified in §18 and §19.
+
+### 16.1 Distinctions — application email, outreach, and follow-up
+
+Outbound job-search communications are a first-class product capability. The following are **related but not interchangeable**:
+
+| Kind | Meaning |
+|------|---------|
+| **Application email** | An **application submission channel** used when an employer/job posting directs candidates to apply by email |
+| **Outreach** | Job-search communication to a relevant employer/hiring stakeholder associated with a job, application, target employer, or hiring opportunity |
+| **Follow-up** | Communication associated with an existing interaction, application, recruiter thread, or interview |
+
+Do not collapse these into a single undifferentiated “send email” authority.
+
+### 16.2 Application-worker Gmail READ capability
+
+The normal ATS/browser application worker may receive **narrowly scoped Gmail READ** capability when necessary for application execution, such as:
+
+- locating verification messages;  
+- retrieving OTP / security codes where permitted by autonomy and security policy;  
+- reading application-related messages necessary to complete an authorized workflow.  
+
+Normal ATS/browser execution does **not** inherently require outbound Gmail **send** authority.
+
+Connecting Gmail, and granting read capability for verification, must **not** implicitly grant outbound send authority to every application/browser session.
+
+### 16.3 Outbound Job-Search Communications capability
+
+Outbound email (and any future equivalent outbound channel) must be treated as a **distinct product capability** with its own controlled execution and policy boundary — separate from the normal ATS/browser application worker’s tool surface.
+
+The product must ultimately support legitimate job-search communications including:
+
+1. **Application email** — applications where the employer instructs candidates to apply by email (§16.4).  
+2. **Direct decision-maker outreach** — outreach to relevant employer decision-makers associated with a job opportunity or target company, including roles such as VP of Sales, Head of Sales, hiring manager, recruiter, talent/acquisition contact, and other appropriate decision-makers or hiring stakeholders (§16.5).  
+3. **Follow-up after submitting an application.**  
+4. **Recruiter or hiring-manager follow-up.**  
+5. **Interview-related communications**, including appropriate thank-you and follow-up messages.  
+6. **Other legitimate job-search communications** initiated by the Founder or authorized under the product’s autonomy policy.
+
+This capability must **not** be interpreted as:
+
+- unrestricted email authority;  
+- bulk spam;  
+- arbitrary marketing outreach;  
+- permission for the general browser/application agent to send email whenever it chooses.  
+
+Outbound communications must obey `AUTONOMY_AND_APPLICATION_POLICY.md` for who may be contacted, when, and under what authorization. Exact autonomous-send versus Founder-authorization boundaries are **defined there**, not in this PRD beyond the requirement to obey that policy.
+
+Security/autonomy controls for this capability must be able to govern, as applicable:
+
+- who may be contacted;  
+- why they may be contacted;  
+- which job / company / contact the communication relates to;  
+- recipient provenance;  
+- message grounding;  
+- attachments;  
+- application / artifact binding where applicable;  
+- authorization level;  
+- send verification;  
+- audit / history;  
+- follow-up state;  
+- duplicate / repeated-contact prevention;  
+- dry-run behavior (§11.1).  
+
+This section states **product** requirements. It does **not** prescribe implementation technology, session architecture, or tool-permission mechanisms.
+
+### 16.4 Email as an application submission channel
+
+Email is a legitimate application submission channel when an employer or job posting directs candidates to apply that way.
+
+An email application must ultimately receive the same integrity protections applicable to browser/ATS submissions, including:
+
+- qualified opportunity;  
+- correct candidate;  
+- correct job;  
+- correct recipient;  
+- correct tailored resume;  
+- correct cover letter or message where applicable;  
+- truthful content;  
+- submission authorization under autonomy policy;  
+- dry-run protection (§11.1);  
+- submission / send verification (§15);  
+- durable application record.  
+
+Agent self-report after an intended send (for example, treating “send then RESULT:APPLIED” as proof) is **not** sufficient independent verification. Verifiable evidence that the outbound application communication was actually sent successfully is required before the application is considered confirmed (§15).
+
+### 16.5 Direct decision-maker outreach
+
+Direct decision-maker outreach is an intentional ApplyPilot capability.
+
+The product must be capable of supporting outreach associated with:
+
+- a discovered job;  
+- an application;  
+- a target employer;  
+- a relevant hiring opportunity.  
+
+Not every outreach message must have an existing submitted application if the approved autonomy policy later permits pre-application outreach.
+
+Outreach remains subject to §16.3 controls and must not become indiscriminate or spam-like contact of unrelated parties.
+
+### 16.6 Follow-up as a managed workflow
+
+ApplyPilot must support job-search follow-up as a **managed workflow**, not as isolated email sending.
+
+Where available, the product should be capable of knowing:
+
+- what was sent;  
+- to whom;  
+- why;  
+- which job / company it concerned;  
+- when it was sent;  
+- whether a reply was received;  
+- whether another follow-up is appropriate;  
+- whether the communication resulted in recruiter contact, interview progression, rejection, or another outcome.  
+
+This requirement integrates conceptually with outcome tracking and learning (§17, §19) without requiring those later phases to be fully implemented before the requirement exists.
+
+### 16.7 Communication records and context association
+
+The system must preserve enough structured context to associate outbound communications with the appropriate:
+
+- job;  
+- company;  
+- contact;  
+- application (when applicable);  
+- communication purpose;  
+- timestamp / status;  
+
+where applicable.
+
+### 16.8 Founder control
+
+The Founder is the governing human authority for this product.
+
+The product must support:
+
+- Founder-initiated communications;  
+- policy-authorized autonomous communications (only as permitted by autonomy policy);  
+- Founder visibility into communication history and status (including through the Operator Console where appropriate);  
+- Founder intervention and control.  
+
+Exact boundaries between autonomous send and Founder authorization belong in `AUTONOMY_AND_APPLICATION_POLICY.md`.
+
+### 16.9 Security and trust for outbound communications
+
+Outbound communication authority must:
+
+- be scoped to legitimate job-search purposes;  
+- not be implicitly granted merely because a mailbox is connected;  
+- not be implicitly granted to every application/browser session;  
+- fail closed when required recipient, job, context, or authorization information is missing;  
+- resist untrusted JD / page / email content attempting to redirect communication to unrelated recipients or purposes;  
+- preserve candidate truth and artifact integrity;  
+- be auditable.  
+
+Implementation mechanisms are deferred to engineering/security design; this PRD requires the product behavior and trust boundary.
 
 ---
 
-## 17. Email and response tracking
+## 17. Email, response tracking, and communication outcomes
 
-The system must associate application-related communications with the correct application where practical.
+The system must associate application-related and authorized outbound communications with the correct application, job, company, and contact where practical (§16.7).
 
 It should be capable of distinguishing meaningful communication types such as:
 
 - account verification;  
 - application confirmation;  
+- application email (outbound submission channel);  
+- authorized outreach;  
+- follow-up;  
 - rejection;  
-- recruiter outreach;  
+- recruiter outreach (inbound);  
 - screening/assessment request;  
 - interview request;  
+- interview-related thank-you / follow-up;  
 - scheduling communication;  
 - additional-information request;  
 - offer-related communication;  
 - other material application-status communication.  
 
-These events should update or inform the application’s state.
+These events should update or inform the application’s state and, where applicable, communication follow-up state (§16.6).
 
 Email-derived evidence is one part of multi-source outcome tracking (§19). Interview progression must not be defined solely as receiving a particular Gmail message.
 
@@ -829,15 +1014,15 @@ Email-derived evidence is one part of multi-source outcome tracking (§19). Inte
 
 This is a first-class product capability.
 
-The finished autonomous job-search agent requires a normal owner-facing interface through which the owner can communicate with, control, question, update, and provide real-world outcome information to the running agent.
+The finished autonomous job-search agent requires a normal Founder-facing interface through which the Founder can communicate with, control, question, update, and provide real-world outcome information to the running agent.
 
-The product must not merely run autonomously in the background with no owner operating experience.
+The product must not merely run autonomously in the background with no Founder operating experience.
 
-### 18.1 Owner-facing operating interface
+### 18.1 Founder-facing operating interface
 
-The finished product must provide an owner-facing operating interface suitable for normal daily use — the **Operator Console / Natural-Language Agent Interface**.
+The finished product must provide a Founder-facing operating interface suitable for normal daily use — the **Operator Console / Natural-Language Agent Interface**.
 
-For routine job-search operations, the owner should **not** need to use:
+For routine job-search operations, the Founder should **not** need to use:
 
 - Cursor;  
 - Claude Code;  
@@ -849,13 +1034,13 @@ For routine job-search operations, the owner should **not** need to use:
 
 The existing CLI may remain available as an engineering/diagnostic/administrative interface (§18.16).
 
-The Operator Console is the normal owner-facing interface.
+The Operator Console is the normal Founder-facing interface.
 
 ### 18.2 Natural-language communication
 
-The owner should be able to communicate with the running agent in ordinary natural language.
+The Founder should be able to communicate with the running agent in ordinary natural language.
 
-The system should interpret owner messages into appropriate product intents such as:
+The system should interpret Founder messages into appropriate product intents such as:
 
 - query;  
 - instruction;  
@@ -893,11 +1078,11 @@ Illustrative examples (not an exhaustive command list):
 - “I received an offer.”  
 - “That job is no longer something I want.”  
 
-Do not require the owner to memorize rigid commands for routine use.
+Do not require the Founder to memorize rigid commands for routine use.
 
 Structured UI controls may supplement natural-language interaction where useful, but should not replace the conversational operating model.
 
-The interface should behave like communication with an autonomous agent being managed by its owner, not like operating a collection of scripts.
+The interface should behave like communication with an autonomous agent being managed by its Founder, not like operating a collection of scripts.
 
 ### 18.3 Conversation is the interface — structured state is the system of record
 
@@ -912,7 +1097,7 @@ Conversation history alone must **not** become the authoritative persistence mec
 
 Conceptually:
 
-**Owner message → Intent / entity resolution → Policy / authority check → Structured action → Durable state update → Audit record → Owner confirmation / response.**
+**Founder message → Intent / entity resolution → Policy / authority check → Structured action → Durable state update → Audit record → Founder confirmation / response.**
 
 Examples:
 
@@ -937,7 +1122,7 @@ Examples of resolvable entities:
 - job description;  
 - application outcome.  
 
-If the owner says “Microsoft called me. I have a recruiter interview Friday.” and exactly one active Microsoft application clearly matches, the system should be capable of associating the event with that application.
+If the Founder says “Microsoft called me. I have a recruiter interview Friday.” and exactly one active Microsoft application clearly matches, the system should be capable of associating the event with that application.
 
 If multiple plausible applications exist, the agent must **not** guess.
 
@@ -947,9 +1132,9 @@ The same principle applies to statements such as “I interviewed with them toda
 
 Conversational context may help identify “them,” but consequential durable updates must be tied to a sufficiently resolved entity/application.
 
-### 18.5 Owner-reported outcomes
+### 18.5 Founder-reported outcomes
 
-The product must explicitly support **owner-reported application outcomes**.
+The product must explicitly support **Founder-reported application outcomes**.
 
 This is necessary because important recruiting events may occur outside channels the agent can automatically observe.
 
@@ -965,24 +1150,24 @@ Examples include:
 - verbal rejection;  
 - verbal offer/progression information.  
 
-The owner must be able to report these through natural language.
+The Founder must be able to report these through natural language.
 
 The system should convert this information into structured application history when the relevant application can be reliably identified.
 
-### 18.6 Owner-reported information as authoritative owner evidence
+### 18.6 Founder-reported information as authoritative Founder evidence
 
-When the owner explicitly reports an event that occurred outside automatically observable channels, the system should treat the owner’s report as authoritative evidence that the owner-reported event occurred.
+When the Founder explicitly reports an event that occurred outside automatically observable channels, the system should treat the Founder’s report as authoritative evidence that the Founder-reported event occurred.
 
 Record provenance such as:
 
-**SOURCE: OWNER_REPORTED**
+**SOURCE: FOUNDER_REPORTED**
 
-This does not mean every owner statement becomes a permanent global rule.
+This does not mean every Founder statement becomes a permanent global rule.
 
 Distinguish:
 
-- owner-reported application event;  
-- owner preference;  
+- Founder-reported application event;  
+- Founder preference;  
 - reusable candidate fact;  
 - reusable screening answer;  
 - one-time information;  
@@ -992,7 +1177,7 @@ Apply the appropriate autonomy/knowledge policy before converting information in
 
 ### 18.7 Explanation / inspection
 
-Through the Operator Console, the owner should be able to ask the agent why it acted.
+Through the Operator Console, the Founder should be able to ask the agent why it acted.
 
 Examples:
 
@@ -1003,12 +1188,14 @@ Examples:
 - “Which resume did you submit?”  
 - “What screening risks did you identify?”  
 - “Why is this application parked?”  
+- “What outbound communications were sent about this job/company?”  
+- “What follow-ups are pending?”  
 
 The system should answer from durable evidence/audit state where possible, not invent a post-hoc explanation.
 
 ### 18.8 Artifact access
 
-The owner should be able to retrieve or inspect relevant artifacts through the normal operating interface.
+The Founder should be able to retrieve or inspect relevant artifacts through the normal operating interface.
 
 Examples:
 
@@ -1021,7 +1208,8 @@ Examples:
 - screening questions/answers;  
 - submission evidence;  
 - application history;  
-- recruiter/interview progression.  
+- recruiter/interview progression;  
+- authorized outbound communication history and status (§16).  
 
 The exact UI presentation is an architecture/design decision.
 
@@ -1031,7 +1219,7 @@ The product requirement is that normal inspection must not require database quer
 
 The Operator Console must support high-level operational control.
 
-At minimum, the owner should be able to:
+At minimum, the Founder should be able to:
 
 - pause autonomous applications;  
 - resume autonomous applications;  
@@ -1039,13 +1227,14 @@ At minimum, the owner should be able to:
 - see whether the system is paused;  
 - see applications requiring human attention;  
 - see system-wide stop conditions;  
-- inspect recent activity.  
+- inspect recent activity;  
+- inspect and intervene in authorized outbound communications where appropriate (§16.8).  
 
 The exact technical control mechanism is not specified by this PRD.
 
-### 18.10 Owner targeting feedback
+### 18.10 Founder targeting feedback
 
-The Operator Console should allow the owner to teach the system about desired and undesired opportunities conversationally.
+The Operator Console should allow the Founder to teach the system about desired and undesired opportunities conversationally.
 
 Examples:
 
@@ -1098,7 +1287,7 @@ Examples:
 - CAPTCHA;  
 - MFA;  
 - login/account issue;  
-- policy-required owner decision.  
+- policy-required Founder decision.  
 
 ### 18.13 Confirmation should be proportional
 
@@ -1111,18 +1300,18 @@ Confirmation/disambiguation should be used where needed because:
 - the target is ambiguous;  
 - the action is consequential and policy requires approval;  
 - information conflicts with existing authoritative state;  
-- the agent cannot safely determine owner intent.  
+- the agent cannot safely determine Founder intent.  
 
 The product objective remains maximum safe autonomy.
 
-### 18.14 Auditability of owner interactions
+### 18.14 Auditability of Founder interactions
 
-Consequential owner instructions and resulting structured actions should be auditable.
+Consequential Founder instructions and resulting structured actions should be auditable.
 
 Where appropriate preserve:
 
 - timestamp;  
-- owner instruction;  
+- Founder instruction;  
 - interpreted intent;  
 - affected application/job/rule;  
 - resulting state change;  
@@ -1139,7 +1328,7 @@ Do not expand access to personal communication channels merely because additiona
 
 The system should obtain job-search outcome information through the minimum necessary authorized channels.
 
-For example, owner-reported phone/text outcomes can solve the V1 requirement without requiring autonomous access to the owner’s entire personal SMS or phone history.
+For example, Founder-reported phone/text outcomes can solve the V1 requirement without requiring autonomous access to the Founder’s entire personal SMS or phone history.
 
 Any future integration with additional communication channels must be deliberate and authorized.
 
@@ -1154,13 +1343,13 @@ The inherited CLI remains useful for:
 - controlled testing;  
 - administrative operation.  
 
-It should not be the required normal interface for the owner once the Operator Console is available.
+It should not be the required normal interface for the Founder once the Operator Console is available.
 
 The product should separate:
 
 | Interface | Purpose |
 |-----------|---------|
-| **Owner operating experience** | Operator Console / natural-language agent control |
+| **Founder operating experience** | Operator Console / natural-language agent control |
 | **Engineering / maintenance interface** | CLI and related diagnostic tools |
 
 ### 18.17 Implementation boundary
@@ -1179,7 +1368,7 @@ However, the eventual architecture must support:
 - policy enforcement;  
 - auditability;  
 - artifact inspection;  
-- owner-reported outcomes;  
+- Founder-reported outcomes;  
 - operational controls;  
 - outcome-driven learning.  
 
@@ -1196,12 +1385,12 @@ The product should support outcome evidence from sources such as:
 | Category | Examples |
 |----------|----------|
 | **Automatically observed** | Dedicated job-search email; ATS/application status where available; scheduling/interview communications where integrated; calendar events where later integrated and authorized |
-| **Owner reported** | Phone calls; texts; verbal recruiter communication; interviews; other offline/out-of-band events |
-| **Corroborated** | Owner reports an interview and a subsequent email/calendar invitation confirms it; multiple legitimate signals support the same progression state |
+| **Founder reported** | Phone calls; texts; verbal recruiter communication; interviews; other offline/out-of-band events |
+| **Corroborated** | Founder reports an interview and a subsequent email/calendar invitation confirms it; multiple legitimate signals support the same progression state |
 
 The system should retain source/provenance.
 
-Do not require automatic corroboration before accepting a clear owner-reported event.
+Do not require automatic corroboration before accepting a clear Founder-reported event.
 
 ### 19.2 Application outcome / progression model
 
@@ -1241,7 +1430,7 @@ The product requirement is to preserve meaningful progression evidence sufficien
 The product must recognize interview progression from both:
 
 A. automatically observed evidence; and  
-B. owner-reported evidence.  
+B. Founder-reported evidence.  
 
 Do not define “interview reached” solely as receiving a particular Gmail message.
 
@@ -1376,7 +1565,7 @@ Continuous operation must respect:
 - security policy;  
 - Operator Console operational controls (pause/resume/system-wide stop visibility).  
 
-Owner interaction with the running autonomous loop should normally occur through the Operator Console (§18), not by manually reissuing pipeline stage commands.
+Founder interaction with the running autonomous loop should normally occur through the Operator Console (§18), not by manually reissuing pipeline stage commands.
 
 ---
 
@@ -1434,7 +1623,7 @@ This should include, where appropriate:
 - submission result;  
 - verification evidence;  
 - subsequent relevant communications;  
-- owner-reported outcome events and provenance;  
+- Founder-reported outcome events and provenance;  
 - application-state / progression transitions;  
 - consequential Operator Console instructions and resulting structured actions (§18.14).  
 
@@ -1476,23 +1665,25 @@ The product must eventually have measurable success criteria covering areas such
 - ability to distinguish candidate-fit gaps from resume-presentation gaps;  
 - Gate 2 optimization without degradation of Gate 3 quality;  
 - eventual progression of qualified applications through automated screening toward human/recruiter engagement where measurable;  
-- owner can operate the agent without routine CLI/database/source-code interaction;  
+- Founder can operate the agent without routine CLI/database/source-code interaction;  
 - natural-language instructions can become correct durable state/actions;  
 - ambiguous application references are safely disambiguated;  
-- owner-reported offline outcomes can be associated with the correct application;  
-- interview-stage progression can be captured from automatic and owner-reported sources;  
+- Founder-reported offline outcomes can be associated with the correct application;  
+- interview-stage progression can be captured from automatic and Founder-reported sources;  
 - exact submitted resume/JD pairs remain associated with outcomes;  
 - interview-producing applications can contribute to future tailoring intelligence;  
 - learning does not fabricate causality from isolated outcomes;  
-- owner can inspect why applications were selected, tailored, submitted, parked, or rejected;  
-- pause/resume and human-attention controls are accessible through the owner interface;  
-- consequential owner actions remain auditable;  
+- Founder can inspect why applications were selected, tailored, submitted, parked, or rejected;  
+- pause/resume and human-attention controls are accessible through the Founder interface;  
+- consequential Founder actions remain auditable;  
 - autonomous application completion rate;  
-- submission-verification reliability;  
+- submission-verification reliability (including email-as-application send verification);  
 - screening-question automation rate;  
 - HITL frequency;  
 - duplicate-application prevention;  
 - email/application correlation;  
+- authorized outbound communication auditability and context association;  
+- dry-run never produces external communication;  
 - continuous-operation reliability;  
 - security/safety compliance.  
 
@@ -1512,14 +1703,16 @@ Unless explicitly added later, the following are **not** core V1 requirements:
 - STAR-story coaching;  
 - virtual interview presentation coaching;  
 - salary negotiation coaching;  
-- networking automation;  
 - LinkedIn content creation;  
 - personal-brand management;  
 - generic career coaching;  
-- autonomous recruiter messaging unrelated to an active application;  
+- unrestricted / bulk / spam outbound email;  
+- arbitrary marketing or indiscriminate “networking automation” unrelated to approved job-search purposes;  
 - indiscriminate mass application.  
 
-Post-application functionality is included only where necessary to identify and track meaningful employer responses, capture owner-reported progression, support outcome-driven learning, and hand off successful opportunities to the operator through the Operator Console.
+Authorized outbound job-search communications — including application email, direct decision-maker outreach, and managed follow-up under §16 — **are** in-product requirements. They are **not** a license for spam, bulk indiscriminate contact, or always-on send authority for the general ATS/browser worker.
+
+Post-application functionality is included where necessary to identify and track meaningful employer responses, support authorized follow-up and interview-related communications (§16), capture Founder-reported progression, support outcome-driven learning, and hand off successful opportunities through the Operator Console.
 
 The Operator Console is **not** a license to expand into interview coaching, negotiation coaching, or general career-platform features listed above.
 
@@ -1577,15 +1770,19 @@ This section orients readers; it does **not** change requirements.
 | Authoritative facts / no fabrication | Required | Partial fact pinning exists; gaps remain |
 | Title truthfulness (no historical title inflation) | Required | Inherited tailor guidance includes verbatim target-title matching |
 | ATS Screening & Resume Optimization Intelligence (pre-/post-tailor; fit ≠ presentation) | Required | Tailoring exists; affirmative Gate 2 screening loop and fit-vs-presentation distinction not product-complete |
-| Operator Console & Natural-Language Agent Control | Required | Extension popup/options and CLI exist; not a normal owner conversational operating interface |
-| Owner-reported offline outcomes + multi-source progression | Required | Gmail tracking exists; owner-reported phone/text/verbal outcomes and progression model not product-complete |
+| Operator Console & Natural-Language Agent Control | Required | Extension popup/options and CLI exist; not a normal Founder conversational operating interface |
+| Founder-reported offline outcomes + multi-source progression | Required | Gmail tracking exists; Founder-reported phone/text/verbal outcomes and progression model not product-complete |
 | Outcome-driven learning from exact submitted resume/JD pairs | Required | Not product-complete; historical freeze and evidence-backed learning required |
 | Independent submission verification | Required | Success often trusts agent result signals |
+| Email-as-application channel with verifiable send evidence | Required | Inherited prompt may treat send + RESULT as applied; not product-complete |
+| Outbound Job-Search Communications (application email / outreach / follow-up) as distinct capability | Required | Not product-complete; send must not be implicit on every apply session |
+| Application-worker Gmail READ vs outbound SEND separation | Required | Inherited apply worker may expose broad send; not product-complete |
+| Dry-run never produces external communication | Required | Inherited dry-run focuses on browser Submit; not product-complete for email/outbound |
 | ATS-agnostic Layer 1 + selective Layer 2 | Required | Strongest on some platforms; not product-complete |
 | Dedicated job-search Gmail identity | Required | Tracking exists; identity policy is ours; email is not sole outcome source |
 | Security as product gate for unattended operation | Required | Known trust-boundary gaps in starting code |
 
-Where rows conflict, **this PRD wins** until the owner revises it.
+Where rows conflict, **this PRD wins** until the Founder revises it.
 
 ---
 

@@ -317,13 +317,23 @@ def apply(
             console.print("[red]No matching job found for that URL.[/red]")
             raise typer.Exit(code=1)
         mcp_path = _profile_path.parent / ".mcp-apply-0.json"
-        console.print(f"[green]Wrote prompt to:[/green] {prompt_file}")
-        console.print("\n[bold]Run manually:[/bold]")
-        console.print(
-            f"  claude --model {model} -p "
-            f"--mcp-config {mcp_path} "
-            f"--permission-mode bypassPermissions < {prompt_file}"
+        settings_path = _profile_path.parent / ".claude-apply-settings-0.json"
+        from applypilot.apply.launcher import (
+            build_claude_apply_command,
+            write_apply_claude_settings,
         )
+        write_apply_claude_settings(settings_path)
+        manual_cmd = build_claude_apply_command(
+            model=model,
+            mcp_config_path=mcp_path,
+            settings_path=settings_path,
+        )
+        # Drop the trailing "-" stdin marker for the shell-redirect example.
+        if manual_cmd and manual_cmd[-1] == "-":
+            manual_cmd = manual_cmd[:-1]
+        console.print(f"[green]Wrote prompt to:[/green] {prompt_file}")
+        console.print("\n[bold]Run manually (least-privilege; same flags as production):[/bold]")
+        console.print(f"  {' '.join(manual_cmd)} < {prompt_file}")
         return
 
     from applypilot.apply.launcher import main as apply_main

@@ -1,7 +1,7 @@
 # Engineering Implementation Plan
 
 **Document type:** Engineering implementation plan  
-**Authority class:** Owner-approved engineering implementation plan  
+**Authority class:** Founder-approved engineering implementation plan  
 **Status:** Approved — Authoritative  
 **Scope:** Ordered, dependency-aware plan to move ApplyPilot from verified current architecture to safe, useful, continuous autonomous job-application operation  
 **Does not define:** New product requirements, new autonomy policy, or silent architecture rewrites  
@@ -18,6 +18,7 @@
 | Discovery | Complete — this plan consumes `ARCHITECTURE_CURRENT.md`; it does **not** re-discover |
 | Change control | Material scope/order/gate changes require deliberate documented change control. Routine implementation detail inside an approved work package does not require rewriting governance unless architecture, policy, scope, or gates change |
 | Authoritativeness | Authoritative |
+| Amendments | **2026-08-13** — Founder-approved plan amendment: Outbound Job-Search Communications implementation ownership (hybrid placement — WP1.1/WP5 foundational SEND boundary; Phase 8 additive WP8.6–WP8.15 controlled outbound capability; WP9.3 Class 4 Founder-directed intents). Gate D ATS/browser first controlled application does **not** require mature outbound outreach/follow-up and does **not** authorize uncontrolled SEND. Email-only applications remain HITL/deferred until Class 1 safe capability gate. Status remains Approved — Authoritative. |
 
 ---
 
@@ -61,10 +62,10 @@ SAFE WINDOWS BASELINE
 → CORRECT CANDIDATE / JOB QUALIFICATION
 → TRUSTWORTHY RESUME + APPLICATION ARTIFACTS
 → SECURE APPLICATION EXECUTION
-→ VERIFIED FIRST APPLICATION
+→ VERIFIED FIRST APPLICATION (ATS/BROWSER)
 → CONTROLLED ATS EXPANSION
-→ OUTCOME TRACKING
-→ OPERATOR CONSOLE
+→ INBOUND TRACKING + CONTROLLED OUTBOUND COMMUNICATIONS
+→ OPERATOR CONSOLE (INCL. FOUNDER-DIRECTED COMMUNICATIONS)
 → CONTINUOUS ORCHESTRATION
 → OUTCOME-DRIVEN LEARNING
 → UNATTENDED PRODUCTION READINESS
@@ -72,7 +73,7 @@ SAFE WINDOWS BASELINE
 
 **Implementation does not jump from WP0.1 to WP1.1.** After this plan is approved, complete or explicitly satisfy **WP0.2–WP0.5** first. Then begin substantive Phase 1 implementation at **WP1.1** (P0 security + Windows execution baseline).
 
-Do **not** begin with Operator Console polish, Gmail, outcome learning, broad ATS expansion, Firecrawl, Anthropic Skills, claude-mem, Vercel, or generalized refactoring unless a blocker proves one is required earlier (none does).
+Do **not** begin with Operator Console polish, inbound/outbound Gmail productization, outcome learning, broad ATS expansion, Firecrawl, Anthropic Skills, claude-mem, Vercel, or generalized refactoring unless a blocker proves one is required earlier (none does). **Exception already in Phase 1:** WP1.1 must establish that the normal ATS/browser worker has **no inherent Gmail SEND** (READ≠SEND). That boundary is **not** the full Outbound Job-Search Communications subsystem (WP8.6+).
 
 ---
 
@@ -132,11 +133,21 @@ Status values: `NOT STARTED` · `IN PROGRESS` · `BLOCKED` · `VALIDATING` · `C
 | WP8.1 | Dedicated job-search Gmail OAuth integration | 8 | NOT STARTED |
 | WP8.2 | Application–email correlation with evidence thresholds | 8 | NOT STARTED |
 | WP8.3 | Outcome states + multi-source provenance | 8 | NOT STARTED |
-| WP8.4 | Owner-reported outcomes | 8 | NOT STARTED |
+| WP8.4 | Founder-reported outcomes | 8 | NOT STARTED |
 | WP8.5 | Gmail/outcome tracking security gate | 8 | NOT STARTED |
+| WP8.6 | Controlled outbound SEND execution capability | 8 | NOT STARTED |
+| WP8.7 | Recipient provenance and contact identity | 8 | NOT STARTED |
+| WP8.8 | Communication state / audit history | 8 | NOT STARTED |
+| WP8.9 | Class 1 email-as-application channel | 8 | NOT STARTED |
+| WP8.10 | Outbound send verification + dry-run non-transmission | 8 | NOT STARTED |
+| WP8.11 | Duplicate / cadence / do-not-contact controls | 8 | NOT STARTED |
+| WP8.12 | Class 2 routine follow-up | 8 | NOT STARTED |
+| WP8.13 | Class 3 decision-maker outreach | 8 | NOT STARTED |
+| WP8.14 | Outbound ↔ inbound/reply/outcome integration | 8 | NOT STARTED |
+| WP8.15 | Outbound communications initial safe capability gate | 8 | NOT STARTED |
 | WP9.1 | Operator Console local-first shell + hardened backend | 9 | NOT STARTED |
 | WP9.2 | Console operational surfaces (funnel, jobs, artifacts, HITL) | 9 | NOT STARTED |
-| WP9.3 | Natural-language control pipeline | 9 | NOT STARTED |
+| WP9.3 | Natural-language control pipeline (incl. Class 4 communications) | 9 | NOT STARTED |
 | WP9.4 | Durable pause/resume/stop via Console | 9 | NOT STARTED |
 | WP9.5 | Operator Console gate | 9 | NOT STARTED |
 | WP10.1 | Durable continuous orchestration loop | 10 | NOT STARTED |
@@ -165,13 +176,32 @@ This plan preserves **all** work packages and production-quality requirements. I
 
 | Level | Name | Intent |
 |-------|------|--------|
-| **1** | FIRST CONTROLLED REAL APPLICATION | Deliberate proof of the inherited/adapted application path under owner supervision (Gate D) |
-| **2** | CONTROLLED / AUTONOMOUS PRODUCTION APPLICATIONS | System may autonomously apply at production scale under policy (requires full **Gate B** + Gates C/E as applicable — not merely one successful proof) |
+| **1** | FIRST CONTROLLED REAL APPLICATION | Deliberate proof of the inherited/adapted **ATS/browser** application path under Founder supervision (Gate D) |
+| **2** | CONTROLLED / AUTONOMOUS PRODUCTION APPLICATIONS | System may autonomously apply at production scale under policy (requires full **Gate B** + Gates C/E as applicable — not merely one successful proof); includes mature outbound Classes 1–2 and standing-policy Class 3 where approved |
 | **3** | CONTINUOUS / UNATTENDED OPERATION | Closed-loop replenishment and sustained unattended readiness (Gates F / G) |
+
+### 5.0 Outbound Job-Search Communications maturity (within Levels 1–3)
+
+Outbound communications use the **same** Level 1–3 model. They are **not** a conflicting maturity system.
+
+| Outbound maturity | Maps to | Intent |
+|-------------------|---------|--------|
+| **Level 1 — first controlled ATS/browser application** | Gate D | Normal ATS/browser submission may proceed **without** mature outbound outreach/follow-up. Uncontrolled SEND remains unavailable (WP1.1). Email-only jobs stay HITL/deferred until Outbound Initial Safe Capability. |
+| **Outbound Initial Safe Capability** | After **WP8.15** (typically post–Gate D; may run in parallel with Phases 6–7 when dependencies allow) | Controlled SEND capability exists; Class 1 email-as-application is safe; Class 4 Founder-directed send (via WP9.3 when Console exists) under policy; recipient provenance, send verification, audit, dry-run non-transmission required. |
+| **Level 2+ outbound autonomous maturity** | Level 2 / Gates E–F as applicable | Class 2 routine follow-up under Founder-approved cadence policy; Class 3 under Founder authorization **or** approved standing outreach policy; mature reply/outcome integration and cadence/duplicate controls. |
 
 ### 5.1 FIRST CONTROLLED REAL APPLICATION (Gate D)
 
-A supervised, owner-authorized proof for **one** selected qualified job on a validated ATS flow. Completing Gate D does **not** by itself authorize autonomous production-scale applying.
+A supervised, Founder-authorized proof for **one** selected qualified job on a validated **ATS/browser** flow. Completing Gate D does **not** by itself authorize autonomous production-scale applying, and does **not** authorize uncontrolled outbound SEND.
+
+#### First controlled application vs email-as-application (critical)
+
+| Rule | Requirement |
+|------|-------------|
+| **ATS/browser first controlled application** | May proceed through Checkpoint B-FCA + Gate A + Gate C + Gate D once existing Gate-D non-negotiables pass. Full outbound outreach/follow-up subsystem (**WP8.6–WP8.15**) is **not** required merely to prove the first ATS controlled application. |
+| **Uncontrolled SEND** | Remains unavailable on the normal ATS/browser worker (WP1.1 READ≠SEND). Gate D success does **not** lift that boundary. |
+| **Email-only jobs before Class 1 safe path** | Remain **HITL / deferred / non-submitted**. Do **not** bypass Autonomy Policy Class 1 requirements merely to reach Gate D. Temporary WP1.1 parking is intentional until **WP8.9 + WP8.15**. |
+| **If the selected Gate D job is email-only** | Either (a) select a different ATS/browser job for Gate D, or (b) complete Outbound Initial Safe Capability (**WP8.15**) and satisfy Class 1 gates before treating that email application as the Gate D proof. Do **not** weaken email SEND safety to accelerate Gate D. |
 
 #### Non-negotiable before WP5.4 may execute
 
@@ -184,7 +214,7 @@ A supervised, owner-authorized proof for **one** selected qualified job on a val
 
 **Phase 1 — entire Gate A path**
 
-- WP1.1 — least-privilege Claude execution  
+- WP1.1 — least-privilege Claude execution (**includes** normal ATS/browser worker: Gmail READ where required, **no** inherent SEND; email-only → HITL/deferred until Class 1 path)  
 - WP1.2 — secret isolation  
 - WP1.3 — local worker API security where used by the apply path  
 - WP1.4 — CapSolver removed/disabled; security challenges → HITL  
@@ -222,12 +252,13 @@ A supervised, owner-authorized proof for **one** selected qualified job on a val
 
 **Phase 5**
 
-- WP5.1 — dry-run cannot mark applied/submitted; pre-submit stop  
-- WP5.2 — minimal independent submission verification operational  
+- WP5.1 — dry-run cannot mark applied/submitted; pre-submit stop; **dry-run never produces external communication**  
+- WP5.2 — minimal independent submission verification operational (browser/ATS path for Gate D)  
 - WP5.3 — controlled dry-run campaign completed (Gate C)  
 - HITL operational (from WP1.4 + apply path)  
-- Explicit owner authorization for WP5.4  
+- Explicit Founder authorization for WP5.4  
 - WP5.5 — Gate D evidence review after submit  
+- **Not required for ATS/browser Gate D:** WP8.6–WP8.15 outbound subsystem (except the WP1.1 SEND prohibition already in Gate A)  
 
 **Checkpoint B-FCA** (First Controlled Application Readiness) is the named narrower checkpoint for Level 1. It does **not** replace or weaken full **Gate B**.
 
@@ -242,7 +273,8 @@ These remain **in the plan** and are required for Level 2 (autonomous production
 | **WP3.6** maturity portion | Generalized parse-back validation across many output/ATS combinations beyond machine readability for the selected validated ATS |
 | **WP3.7** maturity portion | Mature reusable Jobscan methodology runtime architecture beyond sufficient methodology use for the selected application |
 | **WP3.8** full Gate 2 resume intelligence gate | Closes full **Gate B** for autonomous production resume readiness across the corpus — not a substitute for selected-job validation before WP5.4 |
-| Phases **6–12** | Broad ATS expansion, discovery productization, Gmail, Operator Console, continuous orchestration, outcome learning, unattended hardening — except defects that block Gate D |
+| Phases **6–12** | Broad ATS expansion, discovery productization, inbound Gmail + **controlled outbound communications (WP8.6–WP8.15)**, Operator Console, continuous orchestration, outcome learning, unattended hardening — except defects that block Gate D |
+| **WP8.6–WP8.15** outbound capability | Required for email-as-application and authorized outreach/follow-up — **not** required to complete an ATS/browser Gate D proof |
 
 **Ambiguity rule:** If an FCA vs maturity split inside WP3.5 / WP3.6 / WP3.7 cannot be made safely without ambiguity, keep the **entire** work package before Gate D. Safety and truthfulness take priority over speed. Do **not** automatically defer these WPs wholesale.
 
@@ -256,11 +288,13 @@ Before the system autonomously applies at production scale under policy, require
 - Gate C patterns proven beyond the single first job as needed  
 - **Gate E** multi-ATS controlled production path as applicable  
 - No reliance on “we got lucky once at Gate D” as production readiness  
+- For autonomous **email-as-application** and Class 2 follow-up: **WP8.15** Outbound Initial Safe Capability plus Class 2 cadence policy (WP8.11–WP8.12) as applicable  
+- For autonomous Class 3 outreach: Founder authorization per message **or** an approved standing outreach policy (WP8.13) — never bulk/spam  
 
 ### 5.3 CONTINUOUS / UNATTENDED OPERATION (Level 3)
 
-- **Continuous:** Phase **6** (enough ATS coverage), Phase **7** (discovery replenishment), Phase **8** (tracking), Phase **9** (owner control), Phase **10** (orchestrator), **Gate F**  
-- **Unattended:** Phase **11** (as data allows; may defer learning with owner acceptance), Phase **12**, **Gate G** — Phase 12 security/reliability/observability **must not** be deferred  
+- **Continuous:** Phase **6** (enough ATS coverage), Phase **7** (discovery replenishment), Phase **8** (inbound tracking + controlled outbound), Phase **9** (Founder control / Console), Phase **10** (orchestrator), **Gate F**  
+- **Unattended:** Phase **11** (as data allows; may defer learning with Founder acceptance), Phase **12**, **Gate G** — Phase 12 security/reliability/observability **must not** be deferred  
 
 ---
 
@@ -268,14 +302,15 @@ Before the system autonomously applies at production scale under policy, require
 
 | Gate / Checkpoint | Name | Must prove | Maturity role |
 |-------------------|------|------------|---------------|
-| **A** | Windows / Security Baseline | Windows launch of pipeline + browser + Claude with approved permissions; CapSolver disabled; secrets isolated; local API hardened where used by apply path; HITL security-challenge path works; **no real submit** | Required before Gate D |
+| **A** | Windows / Security Baseline | Windows launch of pipeline + browser + Claude with approved permissions; CapSolver disabled; secrets isolated; local API hardened where used by apply path; HITL security-challenge path works; **normal ATS/browser worker has no inherent outbound SEND**; **no real submit** | Required before Gate D |
 | **B-FCA** | First Controlled Application Readiness | Selected job: JD-substantive qualification with explainable evidence; historical titles protected; truthful tailor + factual validation; pre/post screening sufficient for selected JD/resume; selected resume presentation + machine readability for selected ATS; Jobscan methodology sufficient for selected app; exact resume reviewed/validated | Narrower checkpoint for Level 1 only — **does not weaken Gate B** |
 | **B** | Qualification + Resume Readiness | Full controlled corpus routes correctly; full Gate 2 loop maturity (WP2.6 + WP3.1–WP3.8 as specified); historical titles intact; presentation/parse-back/methodology architecture ready for autonomous production use | Required for Level 2 autonomous production — **not redefined downward for Gate D** |
-| **C** | Dry-Run Application Readiness | End-to-end dry-run for the selected application: select → qualify → prepare → navigate → upload → screening → HITL if needed → **PRE-SUBMIT STOP**; dry-run never writes `applied`/`submitted`; artifacts bound; ATTEMPTED ≠ SUBMITTED ≠ VERIFIED SUBMITTED states exist | Required before Gate D |
-| **D** | First Real Application Authorized | Owner-authorized Level-5 submit on qualified job; evidence distinguishes ATTEMPTED / SUBMITTED / VERIFIED SUBMITTED; immutable artifacts preserved | Level 1 proof — not autonomous production authorization |
+| **C** | Dry-Run Application Readiness | End-to-end dry-run for the selected application: select → qualify → prepare → navigate → upload → screening → HITL if needed → **PRE-SUBMIT STOP**; dry-run never writes `applied`/`submitted`; dry-run **never produces external communication** (no ATS Submit transmission; no email SEND); artifacts bound; ATTEMPTED ≠ SUBMITTED ≠ VERIFIED SUBMITTED states exist | Required before Gate D |
+| **D** | First Real Application Authorized | Founder-authorized Level-5 submit on qualified **ATS/browser** job (unless Class 1 path already gated under WP8.15 for an email-only selected job); evidence distinguishes ATTEMPTED / SUBMITTED / VERIFIED SUBMITTED; immutable artifacts preserved. **Does not authorize uncontrolled outbound SEND** and does **not** imply Outbound Initial Safe Capability | Level 1 proof — not autonomous production authorization; not outbound maturity |
 | **E** | Multi-ATS Controlled Production | Evidence-backed registry entries for multiple ATSes; Workday not permanently abandoned; unknown ATS not silently discarded; small batch across representative ATSes | Level 2 |
-| **F** | Continuous Autonomy | Durable loop discover→…→track→replenish without repeated manual stage commands; pause/stop durable; job-level park; systemic stop observable | Level 3 continuous |
-| **G** | Unattended Production Readiness | Adversarial security + reliability + concurrency + backup criteria met; separate from “controlled applications OK” | Level 3 unattended |
+| **Outbound-Safe** | Outbound Communications Initial Safe Capability | Controlled outbound SEND capability distinct from ATS worker; Class 1 email-as-application with provenance + send verification + audit; dry-run non-transmission; fail-closed authorization; Founder-directed path policy-ready (Console integration may complete via WP9.3). **Required before treating email-as-application as confirmed submitted in production** | Post–Gate D typical; required before Class 1 production use; not required for ATS/browser Gate D |
+| **F** | Continuous Autonomy | Durable loop discover→…→track→replenish without repeated manual stage commands; pause/stop durable; job-level park; systemic stop observable; outbound cadence/follow-up under approved policy where enabled | Level 3 continuous |
+| **G** | Unattended Production Readiness | Adversarial security + reliability + concurrency + backup criteria met; separate from “controlled applications OK”; outbound authority cannot be expanded by untrusted content | Level 3 unattended |
 
 ---
 
@@ -356,17 +391,17 @@ Before the system autonomously applies at production scale under policy, require
 
 | Field | Content |
 |-------|---------|
-| Objective | Remove/replace unsafe broad authority such as inherited `--permission-mode bypassPermissions` |
-| Why required | `ARCHITECTURE_CURRENT.md` §10, §15 P0; Standards least-privilege; Policy browser trust |
-| Current-state evidence | `apply/launcher.py` spawns Claude with `bypassPermissions` |
-| Scope | Least-privilege permission mode / allowlist; deny arbitrary shell/repo/credential authority from untrusted page/JD content |
+| Objective | Remove/replace unsafe broad authority such as inherited `--permission-mode bypassPermissions`; establish normal ATS/browser worker Gmail **READ≠SEND** boundary |
+| Why required | `ARCHITECTURE_CURRENT.md` §10, §15 P0; Standards least-privilege; Policy browser trust; PRD §16 / Autonomy §13 READ≠SEND |
+| Current-state evidence | `apply/launcher.py` spawns Claude with `bypassPermissions`; inherited apply path may expose broad Gmail tools including SEND |
+| Scope | Least-privilege permission mode / allowlist; deny arbitrary shell/repo/credential authority from untrusted page/JD content; normal ATS/browser worker may retain minimum Gmail **READ** for application verification; **must not** receive inherent Gmail SEND / mutation authority |
 | Reuse | PRESERVE Claude + Playwright MCP spine; HARDEN permissions |
-| Implementation requirements | Approved permission model; untrusted ATS/JD content cannot obtain arbitrary shell, repository write, filesystem beyond job artifacts, credentials, unrelated tools |
+| Implementation requirements | Approved permission model; untrusted ATS/JD content cannot obtain arbitrary shell, repository write, filesystem beyond job artifacts, credentials, unrelated tools; email-only opportunities encountered by this worker fail closed / HITL / deferred (**not** falsely `RESULT:APPLIED`); dry-run cannot send email or submit; comments/tests must **not** imply the product forbids outbound SEND — product SEND belongs to controlled outbound capability (**WP8.6+**) |
 | Dependencies | **WP0.2–WP0.5 completed or explicitly satisfied**; WP0.3 inventory available |
-| Tests | Unit/integration asserting spawn flags; adversarial prompt fixtures (static) |
+| Tests | Unit/integration asserting spawn flags; Gmail READ allow / SEND deny; adversarial prompt fixtures (static); email-only and dry-run fail-closed assertions |
 | Validation gate | Part of Gate A |
-| Completion criteria | Production apply path does not use bypassPermissions (or equivalent broad authority) |
-| Out of scope | Rewriting the entire apply agent |
+| Completion criteria | Production ATS/browser apply path does not use bypassPermissions (or equivalent broad authority); normal worker has no inherent outbound SEND |
+| Out of scope | Full Outbound Job-Search Communications subsystem (WP8.6–WP8.15); Class 1–4 productization; outreach/follow-up engines |
 
 ### WP1.2 — Secret isolation (prompts, env, logs)
 
@@ -420,7 +455,7 @@ Before the system autonomously applies at production scale under policy, require
 | Dependencies | WP0.3 |
 | Tests | Smoke: Chrome launches; CDP port responds; extension present when headed |
 | Validation gate | Gate A / Process progressive baseline |
-| Out of scope | WSL as default |
+| Out of scope | WSL as default; redesigning Chrome lifecycle solely for unexplained Cursor-host browser noise (observation note lives in WP1.7) |
 
 ### WP1.6 — Windows process/path/tooling remediation
 
@@ -440,11 +475,12 @@ Before the system autonomously applies at production scale under policy, require
 |-------|---------|
 | Objective | Prove Gate A end-to-end without submitting |
 | Why required | Process §14–16 |
-| Scope | Launch pipeline pieces; browser worker; Claude with approved permissions; secret isolation checks; HITL security-challenge dry path |
+| Scope | Launch pipeline pieces; browser worker; Claude with approved permissions (incl. ATS-worker no inherent SEND); secret isolation checks; HITL security-challenge dry path |
 | Dependencies | WP1.1–WP1.6 |
 | Validation gate | **Gate A** |
-| Completion criteria | Checklist signed; **no real application submitted** |
-| Out of scope | Qualification rewrite (Phase 2) |
+| Completion criteria | Checklist signed; **no real application submitted**; **no uncontrolled outbound email** |
+| Validation note (observation only) | During controlled Windows/browser validation, **record which process/tool launches each visible Chrome instance/window** (ApplyPilot apply Chrome, Patchright, Playwright, Cursor/dev tooling, ordinary user Chrome, other) so repeated visible browser launches can be definitively attributed. This is an observation/validation requirement — **not** a Chrome lifecycle redesign and **not** outbound-communications scope. |
+| Out of scope | Qualification rewrite (Phase 2); implementing outbound SEND |
 
 ---
 
@@ -725,11 +761,11 @@ Before the system autonomously applies at production scale under policy, require
 
 | Field | Content |
 |-------|---------|
-| Objective | Fix dry-run → `applied` leak; enforce pre-submit stop in dry-run |
-| Why required | §15 P1; §39.6 |
-| Scope | `result_handlers` / launcher dry-run paths |
-| Dependencies | WP4.4 |
-| Tests | Dry-run never reaches submitted/applied |
+| Objective | Fix dry-run → `applied` leak; enforce pre-submit stop in dry-run; enforce **dry-run never produces external communication** |
+| Why required | §15 P1; §39.6; PRD §11.1; Autonomy §13.8 |
+| Scope | `result_handlers` / launcher / prompt dry-run paths for ATS Submit **and** any communication/send branch reachable from apply workers |
+| Dependencies | WP4.4; coordinates with WP1.1 SEND prohibition |
+| Tests | Dry-run never reaches submitted/applied; dry-run cannot send email or otherwise transmit externally |
 | Validation gate | Gate C |
 
 ### WP5.2 — Minimal independent submission verification
@@ -738,11 +774,11 @@ Before the system autonomously applies at production scale under policy, require
 |-------|---------|
 | Objective | Verification evidence architecture independent of agent RESULT phrases |
 | Why required | §16; PRD attempted≠submitted≠verified |
-| Scope | Browser confirmation signals, IDs, history; confidence field used honestly; phrase inference insufficient alone |
+| Scope | Browser confirmation signals, IDs, history for ATS/browser path; confidence field used honestly; phrase inference insufficient alone |
 | Dependencies | WP4.4 |
 | Tests | Fixture pages → correct verification class |
 | Validation gate | Gate C/D |
-| Out of scope | Perfect ATS API verification for all vendors |
+| Out of scope | Perfect ATS API verification for all vendors; full outbound send-verification productization (**WP8.10** owns outbound send verification — this WP must remain compatible / reusable) |
 
 ### WP5.3 — Controlled dry-run application campaign
 
@@ -755,17 +791,17 @@ Before the system autonomously applies at production scale under policy, require
 | Completion criteria | Dry-run campaign checklist complete; dry-run never writes applied/submitted; **no real submit** |
 | Out of scope | Throughput optimization; requiring full Gate B corpus completion |
 
-### WP5.4 — First controlled real application (owner-authorized)
+### WP5.4 — First controlled real application (Founder-authorized)
 
 | Field | Content |
 |-------|---------|
-| Objective | One genuinely qualified application on supported/validated ATS flow with owner visibility — Level 1 proof, not autonomous production authorization |
+| Objective | One genuinely qualified application on supported/validated **ATS/browser** flow with Founder visibility — Level 1 proof, not autonomous production authorization |
 | Why required | Process Level 5; §39.7 |
-| Scope | Explicit owner authorization record; preserve exact artifacts; capture submission evidence; verify resulting state; exact resume reviewed/validated before submission |
-| Dependencies | **Gate C**; Checkpoint B-FCA; non-negotiable list in §5.1; CapSolver disabled; HITL operational; explicit owner authorization |
+| Scope | Explicit Founder authorization record; preserve exact artifacts; capture submission evidence; verify resulting state; exact resume reviewed/validated before submission |
+| Dependencies | **Gate C**; Checkpoint B-FCA; non-negotiable list in §5.1; CapSolver disabled; HITL operational; explicit Founder authorization |
 | Validation gate | **Gate D** (with WP5.5) |
-| Completion criteria | Purpose is prove system, not maximize volume; ATTEMPTED / SUBMITTED / VERIFIED SUBMITTED remain distinct |
-| Out of scope | Batch apply; treating Gate D as full Gate B or Level 2 readiness |
+| Completion criteria | Purpose is prove system, not maximize volume; ATTEMPTED / SUBMITTED / VERIFIED SUBMITTED remain distinct; Gate D success **does not** authorize uncontrolled outbound SEND |
+| Out of scope | Batch apply; treating Gate D as full Gate B or Level 2 readiness; using email-only application as Gate D proof without **WP8.15** Class 1 safe path; implementing outreach/follow-up |
 
 ### WP5.5 — Gate D evidence review
 
@@ -879,9 +915,11 @@ Before the system autonomously applies at production scale under policy, require
 
 ---
 
-# PHASE 8 — Dedicated job-search Gmail + outcome tracking
+# PHASE 8 — Dedicated job-search Gmail, outbound communications, and outcome tracking
 
-> Owner creates dedicated Gmail separately. **Does not block Gate D.**
+> Founder creates dedicated Gmail separately. **Inbound tracking and outbound communications do not block ATS/browser Gate D.**  
+> **Placement (hybrid):** foundational SEND prohibition remains WP1.1; dry-run/verification compatibility remains WP5; **controlled outbound SEND and Classes 1–3** are owned here as additive **WP8.6–WP8.15**; Class 4 Founder-directed intents extend **WP9.3** (Console) rather than duplicating Console architecture.  
+> Temporary WP1.1 HITL parking for email-only jobs is **not** final product behavior — Class 1 is **WP8.9 + WP8.15**.
 
 ### WP8.1 — Dedicated job-search Gmail OAuth integration
 
@@ -892,14 +930,16 @@ Before the system autonomously applies at production scale under policy, require
 | Current-state evidence | `tracking/` + Gmail MCP; one-shot `track` |
 | Reuse | PRESERVE + ADAPT |
 | Dependencies | Gate D recommended before prioritizing; not a Gate D blocker |
-| Out of scope | Configuring the account in this planning task |
+| Implementation requirements | Mailbox connection/READ for tracking must remain separable from outbound SEND authority (Autonomy §13.2); do not grant the normal ATS/browser worker inherent SEND via this WP |
+| Out of scope | Configuring the account in this planning task; unrestricted SEND on every apply session |
 
 ### WP8.2 — Application–email correlation with evidence thresholds
 
 | Field | Content |
 |-------|---------|
-| Objective | Correlate with employer/requisition/title/sender/timing; no weak ambiguous state mutation |
+| Objective | Correlate inbound messages with employer/requisition/title/sender/timing; no weak ambiguous state mutation |
 | Dependencies | WP8.1, WP4.1 |
+| Out of scope | Treating inbound correlation alone as outbound send verification (see WP8.10) |
 
 ### WP8.3 — Outcome states + multi-source provenance
 
@@ -907,12 +947,13 @@ Before the system autonomously applies at production scale under policy, require
 |-------|---------|
 | Objective | Confirmation, recruiter outreach/screen, interview stages, rejection, offer, other approved outcomes with provenance |
 | Dependencies | WP8.2, WP4.4 |
+| Implementation requirements | Remain extensible for outbound communication records (WP8.8) and reply→outcome chains (WP8.14) without inventing a redundant second outcome system |
 
-### WP8.4 — Owner-reported outcomes
+### WP8.4 — Founder-reported outcomes
 
 | Field | Content |
 |-------|---------|
-| Objective | Phone/text/in-person/offline reporting with `OWNER_REPORTED` provenance |
+| Objective | Phone/text/in-person/offline reporting with Founder-reported provenance |
 | Why required | PRD §18–19; gap §19 |
 | Dependencies | WP8.3; Console WP9.3 for NL path preferred |
 
@@ -920,10 +961,128 @@ Before the system autonomously applies at production scale under policy, require
 
 | Field | Content |
 |-------|---------|
-| Objective | Prove tracking cannot confuse applications; malicious email cannot become agent authority |
+| Objective | Prove tracking cannot confuse applications; malicious email cannot become agent authority or expand SEND authority |
 | Dependencies | WP8.1–WP8.4 |
-| Validation | Phase 8 gate |
-| Out of scope | Email as sole outcome source |
+| Validation | Inbound/outcome security portion of Phase 8 |
+| Out of scope | Email as sole outcome source; outbound Initial Safe Capability (WP8.15) |
+
+### WP8.6 — Controlled outbound SEND execution capability
+
+| Field | Content |
+|-------|---------|
+| Objective | Implement a **dedicated controlled outbound-communications execution capability** distinct from the normal ATS/browser application worker |
+| Why required | PRD §16.3; Autonomy §13.2 |
+| Scope | Controlled SEND authority under Autonomy Policy Classes 1–4; least-privilege execution; fail-closed authorization; communication class/purpose; Founder authorization or standing-policy basis where required; dry-run no-transmission compatibility; auditability hooks |
+| Reuse | Extend mailbox integration from WP8.1; **do not** re-grant SEND to the normal ATS/browser worker (WP1.1 boundary preserved) |
+| Dependencies | WP1.1 (READ≠SEND preserved); WP8.1; WP4.1 identity binding; WP5.1 dry-run non-transmission semantics |
+| Implementation requirements | NORMAL ATS WORKER → Gmail READ where required, no inherent SEND; CONTROLLED OUTBOUND → SEND only under policy. Exact transport/mechanism left to architecture/implementation (not prescribed here beyond existing authoritative architecture). |
+| Validation gate | Feeds **Outbound-Safe** (WP8.15) |
+| Out of scope | Bulk/spam/marketing outreach; absorbing full Class 2–3 policy engines in this WP alone; moving this work into WP1.1 |
+
+### WP8.7 — Recipient provenance and contact identity
+
+| Field | Content |
+|-------|---------|
+| Objective | Explicit ownership for recipient identity, address, source/provenance, job/company/contact association, conflict handling, fail-closed/HITL on uncertainty |
+| Why required | Autonomy §13.7; PRD §16.7 / §16.9 |
+| Scope | Grounded recipients only; no model-invented recipients; untrusted JD/page/email content is not itself authorization to redirect recipients |
+| Dependencies | WP8.6; WP4.1; WP2.1 where candidate/company facts bind |
+| Tests | Invented/conflicting recipient → fail closed; provenance recorded |
+| Validation gate | Required before Class 1 production send (WP8.15) |
+| Out of scope | Inventing numeric cadence values; unrestricted contact scraping |
+
+### WP8.8 — Communication state / audit history
+
+| Field | Content |
+|-------|---------|
+| Objective | Durable communication records extending application/outcome model |
+| Why required | PRD §16.7–16.8; Autonomy §13 |
+| Scope | Where applicable record: communication type/class; job; company; contact; application; purpose; subject/message or durable representation; attachments; authorization basis; timestamp; send state; verification state; reply state; follow-up state; outcome relationship |
+| Reuse | EXTEND WP8.3 / application state (WP4.4) — do not create a redundant parallel history system |
+| Dependencies | WP8.6, WP8.7, WP8.3, WP4.4 |
+| Validation gate | Feeds WP8.15 |
+| Out of scope | Operator Console UX polish (WP9.2 surfaces history) |
+
+### WP8.9 — Class 1 email-as-application channel
+
+| Field | Content |
+|-------|---------|
+| Objective | Implement Class 1 email application as a real submission channel (replacing temporary WP1.1 HITL-only parking as the final product behavior) |
+| Why required | PRD §16.4; Autonomy §13.3 |
+| Scope | Structured identification/classification of email-as-application; job-bound recipient; recipient provenance; candidate/job/company binding; tailored resume binding; cover/message artifact binding where applicable; qualification/submission gates; duplicate application prevention; dry-run behavior; controlled SEND via WP8.6; independent/verifiable send confirmation (WP8.10); durable application state (attempted ≠ submitted ≠ verified) |
+| Dependencies | WP8.6–WP8.8; WP8.10; WP2.3–WP2.5 / Checkpoint B-FCA patterns; WP3 artifact integrity; WP4.1–WP4.4; WP5.1–WP5.2 compatibility |
+| Validation gate | **Outbound-Safe** (WP8.15) before production Class 1 confirmed-submitted |
+| Completion criteria | Email-only jobs can be submitted safely under Class 1 gates; agent self-report alone never marks verified submitted |
+| Out of scope | Class 2–3 autonomous outreach; treating Gate D ATS proof as Class 1 proof |
+
+### WP8.10 — Outbound send verification + dry-run non-transmission
+
+| Field | Content |
+|-------|---------|
+| Objective | Independent/verifiable send confirmation for outbound communications; dry-run never transmits |
+| Why required | PRD §11.1, §15–16; Autonomy §13.8–13.9 |
+| Scope | Model self-report (`RESULT:SENT`, `RESULT:APPLIED`, “I sent the email”) is **insufficient** alone; email-as-application cannot become confirmed/verified submitted until send verification succeeds; integrate with WP5.2 submission-verification architecture where appropriate |
+| Dependencies | WP8.6, WP8.9 (coord), WP5.2 |
+| Tests | Simulated send without verification evidence → not verified submitted; dry-run cannot transmit |
+| Validation gate | Required for WP8.15 |
+| Out of scope | Perfect provider-specific verification for every future channel on day one |
+
+### WP8.11 — Duplicate / cadence / do-not-contact controls
+
+| Field | Content |
+|-------|---------|
+| Objective | Idempotent send; retry protection; duplicate communication prevention; recent-contact awareness; configurable communication cadence; opt-out/do-not-contact; prevention of uncontrolled repeated follow-up |
+| Why required | Autonomy §13.10; PRD anti-spam intent |
+| Scope | Controls and policy hooks; **Founder-approved configurable production policy** must exist before unattended Class 2 (and before any autonomous Class 3 standing policy) |
+| Dependencies | WP8.8; WP4.3 where application-level duplicates apply |
+| Implementation requirements | **Do not invent numeric cadence values in this plan or in code defaults pretending to be Founder policy** |
+| Validation gate | Required before autonomous Class 2 (WP8.12); feeds WP8.15 for safe defaults (fail closed if policy absent) |
+| Out of scope | Bulk/spam campaigns; inventing Founder cadence numbers |
+
+### WP8.12 — Class 2 routine follow-up
+
+| Field | Content |
+|-------|---------|
+| Objective | Routine low-risk follow-up: application follow-up; recruiter/hiring-manager follow-up; interview-related thank-you/follow-up |
+| Why required | PRD §16.6; Autonomy §13.4 |
+| Scope | Relationship to inbound/reply state; prior-contact awareness; configurable Founder-approved cadence policy; duplicate/retry protection; stop/do-not-contact; HITL when communication becomes substantive |
+| Dependencies | WP8.6–WP8.11; WP8.14 (coord); WP8.15 before unattended use |
+| Validation gate | Level 2 outbound maturity — **not** required for ATS/browser Gate D |
+| Out of scope | Open-ended recruiter negotiation; inventing cadence numbers; bulk outreach |
+
+### WP8.13 — Class 3 decision-maker outreach
+
+| Field | Content |
+|-------|---------|
+| Objective | Proactive outreach to relevant hiring stakeholders (e.g. VP of Sales, Head of Sales, hiring manager, recruiter, talent/acquisition contact, other relevant decision-makers) |
+| Why required | PRD §16.5; Autonomy §13.5 |
+| Scope | Relevant contact discovery/resolution where appropriate; verified/grounded recipient identity; relationship to job/company/application context; **Founder authorization initially**; future Founder-approved **standing outreach policies** without redesign; truthful grounded message generation; send verification; audit/history; duplicate/recent-contact protection |
+| Dependencies | WP8.6–WP8.11; WP8.15; WP9.3 for Founder authorization UX preferred |
+| Implementation requirements | Until a standing policy is Founder-approved, Class 3 remains Founder-authorized / HITL. **No bulk/spam/unrelated outreach.** |
+| Validation gate | Level 2+ outbound maturity |
+| Out of scope | Arbitrary marketing lists; model-invented recipients; requiring Class 3 before Gate D |
+
+### WP8.14 — Outbound ↔ inbound/reply/outcome integration
+
+| Field | Content |
+|-------|---------|
+| Objective | Integrate outbound communications with inbound Gmail/outcome work so relationships such as OUTREACH SENT → REPLY RECEIVED → RECRUITER CONTACT → INTERVIEW → FOLLOW-UP → OUTCOME are understandable |
+| Why required | PRD §16.6–17; Autonomy §13.2 inbound effects |
+| Scope | EXTEND WP8.2–WP8.3 / WP8.8 — do not duplicate inbound tracking |
+| Dependencies | WP8.2–WP8.3, WP8.8, WP8.12–WP8.13 as applicable |
+| Validation gate | Feeds Gate F outbound continuity; not a Gate D blocker |
+| Out of scope | Replacing Founder-reported offline outcomes (WP8.4) |
+
+### WP8.15 — Outbound communications initial safe capability gate
+
+| Field | Content |
+|-------|---------|
+| Objective | Prove Outbound Initial Safe Capability: controlled SEND boundary; Class 1 email-as-application with provenance + verification + audit; dry-run non-transmission; fail-closed authorization; no uncontrolled SEND on ATS worker |
+| Why required | Closes PRD/Autonomy outbound gaps for safe production Class 1 / Founder-directed readiness |
+| Dependencies | WP8.6–WP8.11; WP1.1 boundary regression; WP5.1 dry-run regression; WP9.3 Class 4 intents when Console path is used for Founder-directed send |
+| Validation gate | **Outbound-Safe** |
+| Completion criteria | Email-only applications may leave temporary HITL parking and use Class 1 when gates pass; ATS/browser Gate D remains independent |
+| Out of scope | Declaring Level 2 autonomous Class 2/3 maturity without cadence/standing policy; declaring Gate G |
 
 ---
 
@@ -945,20 +1104,21 @@ Before the system autonomously applies at production scale under policy, require
 
 | Field | Content |
 |-------|---------|
-| Objective | Status, funnel, jobs, qualification, resumes, covers, application state, submission evidence, HITL, outcomes, failures, pause/resume, safe config |
-| Implementation requirements | No secret exposure |
-| Dependencies | WP9.1, WP4.*, WP8.4 as available |
+| Objective | Status, funnel, jobs, qualification, resumes, covers, application state, submission evidence, HITL, outcomes, failures, pause/resume, safe config; **authorized outbound communication history/status** when WP8.8+ available |
+| Implementation requirements | No secret exposure; outbound surfaces must not imply ATS worker has SEND |
+| Dependencies | WP9.1, WP4.*, WP8.4 / WP8.8 as available |
 
-### WP9.3 — Natural-language control pipeline
+### WP9.3 — Natural-language control pipeline (incl. Class 4 communications)
 
 | Field | Content |
 |-------|---------|
-| Objective | OWNER MESSAGE → INTENT → ENTITY RESOLUTION → POLICY CHECK → STRUCTURED ACTION → DURABLE STATE → AUDIT → RESPONSE |
-| Why required | PRD §18; Policy NL must not expand authority |
-| Scope | Example intents: pause/resume, what happened, show resume, interview/rejection reports, exclusions, why rejected, retry |
-| Implementation requirements | Ambiguity → clarify; no arbitrary SQL/state mutation from raw NL |
-| Dependencies | WP9.1–WP9.2, WP2.4 |
-| Tests | Intent/entity/ambiguity/policy/audit suite |
+| Objective | FOUNDER MESSAGE → INTENT → ENTITY RESOLUTION → POLICY CHECK → STRUCTURED ACTION → DURABLE STATE → AUDIT → RESPONSE |
+| Why required | PRD §18 / §16.8; Policy NL must not expand authority; Autonomy §13.6 Class 4 |
+| Scope | Example intents: pause/resume, what happened, show resume, interview/rejection reports, exclusions, why rejected, retry; **Class 4 Founder-directed communications** — prepare / inspect / send / follow up on legitimate job-search communications via the **controlled outbound capability (WP8.6+)**, not by expanding ATS-worker SEND |
+| Implementation requirements | Ambiguity → clarify; no arbitrary SQL/state mutation from raw NL; Founder instructions remain scope-bound and policy-controlled (recipient provenance, truthfulness, dry-run, security); do **not** duplicate outbound execution architecture — invoke WP8.6+ |
+| Dependencies | WP9.1–WP9.2, WP2.4; WP8.6–WP8.11 for send/follow-up actions (Console may expose prepare/inspect earlier) |
+| Tests | Intent/entity/ambiguity/policy/audit suite; Class 4 send cannot bypass WP8 controls |
+| Out of scope | Using NL to authorize bulk/spam outreach or to grant the ATS/browser worker inherent SEND |
 
 ### WP9.4 — Durable pause/resume/stop via Console
 
@@ -1145,9 +1305,10 @@ Later, evidence-based disposition (KEEP / ARCHIVE / REMOVE / MIGRATE-GENERALIZE)
 | PATH: Python/Node/Claude/openssl | 0–1 | WP0.3, WP1.6 | Inventory + remediate | A |
 | Silent failures notify-send/focus/`/proc` | 1 | WP1.6 | Windows-safe paths; document | A |
 | P0 `bypassPermissions` + secrets in prompts | 1 | WP1.1, WP1.2 | Least privilege + secret isolation | A / before D |
+| P0 unrestricted Gmail SEND on ATS/browser worker | 1, 8 | WP1.1 (deny SEND); WP8.6–WP8.15 (controlled outbound) | READ≠SEND + dedicated outbound capability | A (no uncontrolled SEND); Outbound-Safe for Class 1 |
 | P0 localhost API auth/CORS/passwords | 1 | WP1.3 | Harden API | A / before D |
 | P0 CapSolver production path | 1 | WP1.4 | REMOVE/DISABLE; HITL | A / before D |
-| P0 prompt injection surface | 1, 12 | WP1.1, WP12.1 | Privilege reduce + adversarial suite | A; G for unattended |
+| P0 prompt injection surface | 1, 8, 12 | WP1.1, WP8.5–WP8.7, WP12.1 | Privilege reduce + outbound provenance + adversarial suite | A; Outbound-Safe; G for unattended |
 | Persona/scoring rewrite + JD-substantive qualification | 2 | WP2.1–WP2.6 | Replace IC-eng; JD analysis | B / before D |
 | Historical title integrity + factual tailor policy | 3 | WP3.2–WP3.4 | Fix prompt/validator | B-FCA / before D (full Gate B maturity continues via WP3.5–WP3.8) |
 | Full qualification corpus / Gate 2 maturity | 2–3 | WP2.6, WP3.5–WP3.8 maturity | Autonomous production readiness | **B** (Level 2; not required to finish Gate D) |
@@ -1159,7 +1320,8 @@ Later, evidence-based disposition (KEEP / ARCHIVE / REMOVE / MIGRATE-GENERALIZE)
 | Prompt-injection security testing (unattended) | 12 | WP12.1 | Adversarial suite | G |
 | Operator Console HITL path (or equivalent) | 9 | WP9.1–WP9.2 | Console HITL | F/G *(equivalent HITL exists for Gate D via current HITL after Phase 1)* |
 | Credit/quota stop reliability | 10 | WP10.2 | Systemic stop | F/G |
-| Outcome tracking + owner-reported | 8–9 | WP8.3–WP8.4, WP9.3 | Multi-source outcomes | F recommended; G |
+| Outcome tracking + Founder-reported | 8–9 | WP8.3–WP8.4, WP9.3 | Multi-source outcomes | F recommended; G |
+| Outbound Job-Search Communications (SEND, Class 1–3, audit, cadence) | 8–9 | WP8.6–WP8.15, WP9.3 (Class 4) | Controlled outbound + Console intents | Outbound-Safe; Level 2+ for autonomous Class 2/3 |
 | Artifact binding + immutable submissions | 4 | WP4.1–WP4.2 | Snapshots | C/D; learning 11 |
 | Observability of system-wide stop | 9–12 | WP9.4, WP12.3 | Console + ops visibility | F/G |
 
@@ -1187,28 +1349,45 @@ Later, evidence-based disposition (KEEP / ARCHIVE / REMOVE / MIGRATE-GENERALIZE)
 | Historical title integrity | 3 / WP3.2 — **required before Gate D** |
 | ATS-agnostic application | 5–6 / WP5.3–WP5.4, WP6.1–WP6.5 |
 | HITL | 1, 5, 9 / WP1.4, WP5.3, WP9.2 |
-| Submission verification | 4–5 / WP4.4, WP5.2–WP5.5 |
-| Duplicate prevention | 4 / WP4.3 |
-| Dedicated Gmail | 8 / WP8.1–WP8.5 |
-| Owner-reported outcomes | 8–9 / WP8.4, WP9.3 |
+| Submission verification (ATS/browser) | 4–5 / WP4.4, WP5.2–WP5.5 |
+| Duplicate prevention (applications) | 4 / WP4.3 |
+| Dedicated Gmail (mailbox / inbound) | 8 / WP8.1–WP8.5 |
+| Application-worker Gmail READ ≠ outbound SEND | 1, 8 / **WP1.1** (ATS worker boundary); **WP8.6** (controlled SEND) |
+| Controlled outbound SEND capability | 8 / **WP8.6**, WP8.15 |
+| Email-as-application (Class 1) | 8 / **WP8.9**, WP8.7, WP8.10, WP8.15 (temporary HITL parking via WP1.1 until then) |
+| Direct decision-maker outreach (Class 3) | 8 / **WP8.13** (+ WP8.7, WP8.11, WP9.3 authorization UX) |
+| Routine follow-up (Class 2) | 8 / **WP8.12**, WP8.11, WP8.14 |
+| Founder-directed communications (Class 4) | 9 / **WP9.3** invoking **WP8.6+** (not a second SEND stack) |
+| Recipient provenance | 8 / **WP8.7** |
+| Communication audit/history | 8 / **WP8.8** (extends WP8.3 / WP4.4) |
+| Outbound send verification | 8 / **WP8.10** (compatible with WP5.2) |
+| Cadence / duplicate / do-not-contact controls | 8 / **WP8.11** (+ WP4.3 for application duplicates) |
+| Inbound/reply ↔ outbound integration | 8 / **WP8.14** (extends WP8.2–WP8.3) |
+| Dry-run never produces external communication | 1, 5, 8 / WP1.1, **WP5.1**, WP8.10 |
+| Founder-reported outcomes | 8–9 / WP8.4, WP9.3 |
 | Operator Console | 9 / WP9.1–WP9.5 |
 | Natural-language control | 9 / WP9.3 |
 | Outcome learning | 11 / WP11.1–WP11.4 (after data) |
 | Windows support | 0–1 / WP0.3, WP1.5–WP1.7; Gate A |
-| Security/trust boundaries | 1, 12 / WP1.1–WP1.4, WP12.1; Gates A/G |
+| Security/trust boundaries | 1, 8, 12 / WP1.1–WP1.4, WP8.5–WP8.7, WP12.1; Gates A / Outbound-Safe / G |
 
 ---
 
 ## 10. Implementation order (what we build first)
 
 1. **WP0.2–WP0.5** — **must complete or be explicitly satisfied before WP1.1** (no jump from WP0.1 → WP1.1)  
-2. **WP1.1 → WP1.7** — **first substantive implementation:** security + Windows (**Gate A**)  
+2. **WP1.1 → WP1.7** — **first substantive implementation:** security + Windows (**Gate A**), including ATS-worker **no inherent SEND** (WP1.1). **Next implementation WP after WP1.1 closeout remains WP1.2** unless a genuine blocking dependency appears (outbound subsystem is **not** such a blocker).  
 3. **WP2.1–WP2.5** — qualification for Checkpoint B-FCA (selected-job readiness)  
 4. **WP3.1–WP3.4** + **FCA-required portions of WP3.5–WP3.7** — resume/Gate 2 for Checkpoint B-FCA  
 5. **WP4.1–WP4.6** — artifacts/state (**Gate C** prep) — required before Gate D  
-6. **WP5.1–WP5.3** — dry-run (**Gate C**) then **WP5.4–WP5.5** (**Gate D** first controlled real application)  
+6. **WP5.1–WP5.3** — dry-run (**Gate C**, including no external communication) then **WP5.4–WP5.5** (**Gate D** first controlled **ATS/browser** application)  
 7. **Complete full Gate B** (WP2.6 + WP3.5–WP3.8 maturity portions as applicable) before Level 2 autonomous production-scale applying  
-8. Then WP6 → WP7 → WP8 → WP9 → WP10 → WP11 → WP12 as gated above (Levels 2–3)  
+8. **WP6 → WP7** as gated (ATS expansion / discovery) — may proceed without outbound maturity  
+9. **WP8.1–WP8.5** — inbound Gmail + outcomes; then **WP8.6–WP8.15** — controlled outbound SEND, Class 1, verification, audit, cadence hooks, Class 2–3, reply integration, **Outbound-Safe** gate (required before production email-as-application; **not** required before ATS/browser Gate D)  
+10. **WP9** — Operator Console; **WP9.3** Class 4 Founder-directed prepare/inspect/send/follow-up via WP8.6+  
+11. Then WP10 → WP11 → WP12 as gated above (Levels 2–3), including autonomous outbound only under approved policy  
+
+**Explicit non-reordering rules:** Do **not** move WP1.2 ahead of WP1.1 completion. Do **not** require WP8.6–WP8.15 before continuing Phase 1 after WP1.1. Do **not** absorb the full outbound subsystem into WP1.1.
 
 ---
 
@@ -1223,18 +1402,20 @@ CapSolver disposition is **resolved** (REMOVE/DISABLE). Remaining owner inputs:
 | O3 | Cover-letter mandatory vs conditional policy details if not fully fixed in PRD for every ATS | Phase 3/5 |
 | O4 | Application pacing / daily limits preferences | Phase 10 |
 | O5 | Whether to evaluate Firecrawl if enrich gaps remain after Phase 7 hardening | After evidence |
-| O6 | Dedicated Gmail account creation timing (owner action outside engineering) | Before WP8.1 runtime |
+| O6 | Dedicated Gmail account creation timing (Founder action outside engineering) | Before WP8.1 runtime |
 | O7 | Console UX preferences within local-first constraint | Phase 9 |
 | O8 | Deferral acceptance if outcome learning delayed while seeking Gate G | Phase 11–12 |
+| O9 | Founder-approved communication cadence / frequency policy values (numeric limits **not** invented by engineering) | Before unattended Class 2 (WP8.12); before any autonomous Class 3 standing policy (WP8.13) |
+| O10 | Optional standing Class 3 outreach policy scope (e.g. post-application VP of Sales under defined conditions) | Before autonomous Class 3; until then Class 3 is Founder-authorized / HITL |
 
-No conflict discovered that requires amending Documents 1–7. CapSolver and title/qualification clarifications already reconciled in approved `ARCHITECTURE_CURRENT.md`.
+PRD and Autonomy Policy outbound amendments (2026-08-13) are reconciled into this plan via WP8.6–WP8.15 and WP9.3. CapSolver and title/qualification clarifications remain as previously reconciled in approved `ARCHITECTURE_CURRENT.md`.
 
 ---
 
 ## 12. Explicit non-goals for early phases
 
 - Operator Console visual polish before Gate A–D  
-- Gmail before first controlled application path  
+- Full inbound Gmail productization / outbound Classes 1–3 before ATS/browser Gate D (WP1.1 SEND prohibition **is** in-scope for Gate A)  
 - Outcome learning before immutable evidence + outcomes  
 - Broad ATS expansion before Gate D  
 - New discovery providers / Firecrawl by default  
@@ -1243,6 +1424,24 @@ No conflict discovered that requires amending Documents 1–7. CapSolver and tit
 - Generalized repo-wide refactoring  
 - Inventing Atlanta employer YAML catalogs from Seattle research files  
 - Arbitrary calendar estimates  
+- Inventing Founder cadence/frequency numeric policy values  
+- Bulk / spam / unrestricted decision-maker outreach  
+- Absorbing the full outbound subsystem into WP1.1  
+- Weakening email SEND safety to accelerate Gate D  
+
+---
+
+## 13. Placement decision — Outbound Job-Search Communications (2026-08-13)
+
+**Selected strategy: hybrid (foundational early + dedicated Phase 8 workstream + Console Class 4 extension).**
+
+| Option | Decision |
+|--------|----------|
+| A. Fully distributed only | Rejected — would leave SEND/Class 1 without a clear owner and risk silent absorption into WP1.1 |
+| B. Entirely new Phase 13 | Rejected — mailbox, audit, and outcomes already belong with Phase 8; Console NL already belongs with Phase 9 |
+| C. **Hybrid (selected)** | WP1.1/WP5 own foundational no-uncontrolled-SEND + dry-run non-transmission; **WP8.6–WP8.15** own controlled outbound capability and Classes 1–3; **WP9.3** owns Class 4 Founder-directed intents invoking WP8.6+ |
+
+Rationale: dependency-correct (identity/artifacts/verification first; mailbox next; autonomous follow-up/outreach after safe capability and Founder policy), preserves Gate D for ATS/browser proof, and keeps READ≠SEND as a permanent security boundary rather than a temporary WP1.1-only hack.
 
 ---
 
@@ -1250,11 +1449,12 @@ No conflict discovered that requires amending Documents 1–7. CapSolver and tit
 
 | Field | Value |
 |-------|--------|
-| Authority class | Owner-approved engineering implementation plan |
+| Authority class | Founder-approved engineering implementation plan |
 | Status | Approved — Authoritative |
 | Authoritativeness | Authoritative |
 | Change control | Material scope/order/gate changes require deliberate documented change control. Routine implementation detail inside an approved work package does not require rewriting governance unless it materially changes architecture, policy, scope, or gates |
-| Next | Begin **WP0.2–WP0.5**, then Phase 1 (WP1.1+) |
+| Latest amendment | **2026-08-13** — Outbound Job-Search Communications ownership (see Document control Amendments) |
+| Next | Close out **WP1.1** (Founder approval/commit as separately directed), then **WP1.2**; do not begin full outbound implementation until Phase 8 sequencing |
 
 ---
 

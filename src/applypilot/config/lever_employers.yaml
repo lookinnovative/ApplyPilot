@@ -1,5 +1,9 @@
 # Lever ATS direct-API employer registry.
 #
+# NOT candidate profile / NOT this fork owner's approved production targeting.
+# Active discovery input (may include prior-developer geo bias). See
+# docs/INHERITED_DEVELOPER_CONFIG.md. Generalize in Phase 2/7 as needed.
+#
 # Slugs are the tenant part of the public Lever URL —
 # https://jobs.lever.co/{slug} or
 # https://api.lever.co/v0/postings/{slug}?mode=json.

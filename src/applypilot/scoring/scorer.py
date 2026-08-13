@@ -3,6 +3,12 @@
 Scores jobs on a 1-10 scale by comparing the user's resume against each
 job description. All personal data is loaded at runtime from the user's
 profile and resume file.
+
+WP0.5 / isolation note: The embedded SCORE_PROMPT geography and IC-engineering
+persona (Seattle, Senior/Staff stack language, etc.) is PRIOR-DEVELOPER targeting
+and is NOT this fork owner's approved production candidate truth. Do not treat
+it as authoritative. Replacement is WP2.2 (persona) + WP2.3 (JD-substantive
+qualification). See docs/INHERITED_DEVELOPER_CONFIG.md.
 """
 
 import logging

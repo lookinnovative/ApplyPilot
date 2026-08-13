@@ -1,4 +1,5 @@
 {
+  "_applypilot_config_notice": "EXAMPLE ONLY — NOT production candidate configuration for this ApplyPilot fork. Inherited placeholders (including engineering-oriented target_role examples) are not the owner's authoritative profile. Create ~/.applypilot/profile.json via owner-reviewed init / WP2.1. See docs/INHERITED_DEVELOPER_CONFIG.md",
   "personal": {
     "full_name": "YOUR_LEGAL_NAME",
     "preferred_name": "YOUR_PREFERRED_NAME",

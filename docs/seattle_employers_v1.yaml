@@ -1,3 +1,12 @@
+# =============================================================================
+# NON-RUNTIME / NOT PRODUCTION CANDIDATE CONFIGURATION
+# Prior-developer Seattle research artifact. Not loaded by ApplyPilot runtime.
+# Not this fork owner's authoritative employer or candidate targeting.
+# Do not copy into ~/.applypilot as production config.
+# Disposition: migrate useful ATS IDs later (WP7.4) → archive. Do not delete here.
+# See docs/INHERITED_DEVELOPER_CONFIG.md
+# =============================================================================
+#
 # Seattle-area employers (v1) — researched 2026-04-24.
 #
 # Scope: Senior/Staff backend, distributed systems, platform, AI/ML infra.

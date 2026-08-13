@@ -1,15 +1,20 @@
 # Workday employer registry for ApplyPilot
+#
+# NOT candidate profile / NOT this fork owner's approved production targeting.
+# Prior-developer discovery registry (Seattle/US-oriented commentary below).
+# Active discovery input — generalize in Phase 2/7. See docs/INHERITED_DEVELOPER_CONFIG.md
+#
 # Users can add their own employers by following this pattern.
 # Find your employer's Workday URL at: https://[company].wd[N].myworkdayjobs.com
 
-# Canada-only employers removed 2026-06-10 — the pipeline targets Seattle/US
-# roles and the scorer terminal-archives non-US-eligible postings, so crawling
-# them only burned enrich/score tokens. Removed: TD, CIBC, RBC, BMO, Manulife,
-# Sun Life, Desjardins, Intact, Aviva Canada, TMX, Brookfield, CPP Investments,
-# OMERS, Ontario Teachers, PSP, CDPQ, HOOPP, AIMCo, BlackBerry, PwC, BDO,
-# TELUS International, TELUS Health, Canadian Tire, PC Financial, CAE, Magna,
-# MLSE, OLG, Enbridge, Canadian Solar. Recover entries from git history if a
-# US-focused board emerges for any of them.
+# Canada-only employers removed 2026-06-10 — the inherited pipeline commentary
+# targeted Seattle/US roles and the scorer terminal-archives non-US-eligible
+# postings, so crawling them only burned enrich/score tokens. Removed: TD, CIBC,
+# RBC, BMO, Manulife, Sun Life, Desjardins, Intact, Aviva Canada, TMX,
+# Brookfield, CPP Investments, OMERS, Ontario Teachers, PSP, CDPQ, HOOPP,
+# AIMCo, BlackBerry, PwC, BDO, TELUS International, TELUS Health, Canadian Tire,
+# PC Financial, CAE, Magna, MLSE, OLG, Enbridge, Canadian Solar. Recover entries
+# from git history if a US-focused board emerges for any of them.
 
 employers:
 

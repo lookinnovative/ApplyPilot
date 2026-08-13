@@ -1,4 +1,9 @@
-# Greenhouse-powered employer registry for Seattle-area discovery.
+# Greenhouse-powered employer registry (prior-developer Seattle-area discovery).
+#
+# NOT candidate profile / NOT this fork owner's approved production targeting.
+# Active discovery input for the inherited scraper — generalize geography and
+# employer set in Phase 2/7 work packages. Do not treat as authoritative
+# candidate configuration. See docs/INHERITED_DEVELOPER_CONFIG.md
 #
 # Slugs are the tenant part of the careers URL (boards.greenhouse.io/{slug}
 # or job-boards.greenhouse.io/{slug}). The scraper hits

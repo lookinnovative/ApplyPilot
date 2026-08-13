@@ -1,5 +1,12 @@
-# ApplyPilot search configuration
-# Copy to ~/.applypilot/searches.yaml and customize for your job search.
+# ApplyPilot search configuration — EXAMPLE ONLY
+#
+# NOT production candidate / targeting configuration for this ApplyPilot fork.
+# Inherited example queries are IC-engineering-oriented and must NOT be treated
+# as the approved AI consulting/advisory/enablement search truth.
+# Copy to ~/.applypilot/searches.yaml only after owner customization for THIS
+# candidate (WP2.1+). Wizard output likewise requires owner review.
+# See docs/INHERITED_DEVELOPER_CONFIG.md
+#
 # The wizard (applypilot init) generates a basic version automatically.
 
 # Search queries -- each has a query string and priority tier.

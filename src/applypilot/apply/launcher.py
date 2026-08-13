@@ -199,8 +199,16 @@ def _run_mini_task(worker_id: int, cdp_port: int, instructions: str) -> subproce
         f"Do NOT submit any job applications — only do what the user explicitly asked."
     )
 
-    mcp_config_path = config.APP_DIR / f".mcp-apply-{worker_id}.json"
-    settings_path = config.APP_DIR / f".claude-apply-settings-{worker_id}.json"
+    from applypilot.apply.secret_boundary import build_apply_claude_env
+
+    worker_dir = config.APPLY_WORKER_DIR / f"worker-{worker_id}"
+    worker_dir.mkdir(parents=True, exist_ok=True)
+    mcp_config_path = worker_dir / "mcp-apply.json"
+    settings_path = worker_dir / "claude-apply-settings.json"
+    mcp_config_path.write_text(
+        json.dumps(_make_mcp_config(cdp_port, worker_id=worker_id)),
+        encoding="utf-8",
+    )
     write_apply_claude_settings(settings_path)
     cmd = build_claude_apply_command(
         model="sonnet",
@@ -208,10 +216,8 @@ def _run_mini_task(worker_id: int, cdp_port: int, instructions: str) -> subproce
         settings_path=settings_path,
     )
 
-    env = os.environ.copy()
-    env.pop("ANTHROPIC_API_KEY", None)
-    env.pop("CLAUDECODE", None)
-    env.pop("CLAUDE_CODE_ENTRYPOINT", None)
+    # WP1.2: explicit allowlist — never os.environ.copy().
+    env = build_apply_claude_env()
 
     proc = subprocess.Popen(
         cmd,
@@ -222,7 +228,8 @@ def _run_mini_task(worker_id: int, cdp_port: int, instructions: str) -> subproce
         encoding="utf-8",
         errors="replace",
         env=env,
-        cwd=str(config.APP_DIR),
+        # cwd = worker dir so Playwright MCP roots default to job artifacts only
+        cwd=str(worker_dir),
         start_new_session=True,
     )
     proc.stdin.write(prompt)
@@ -1354,11 +1361,24 @@ def _make_mcp_config(cdp_port: int, worker_id: int = 0) -> dict:
 
     The viewport is synced with the Chrome window size chosen for this
     worker (see chrome._pick_viewport / get_worker_viewport).
+
+    WP1.2: each MCP server gets an explicit least-privilege ``env`` block.
+    Playwright must not receive Gmail credential path vars; CapSolver / LLM
+    provider keys are never included. File uploads rely on Playwright MCP's
+    default workspace-root restriction (Claude cwd = worker dir) — do NOT
+    pass ``--allow-unrestricted-file-access``.
     """
     from applypilot.apply.chrome import _get_real_user_agent, get_worker_viewport
+    from applypilot.apply.secret_boundary import (
+        build_apply_claude_env,
+        build_gmail_mcp_env,
+        build_playwright_mcp_env,
+        validate_mcp_config_secret_boundary,
+    )
 
     vp = get_worker_viewport(worker_id)
-    return {
+    base_env = build_apply_claude_env()
+    cfg = {
         "mcpServers": {
             "playwright": {
                 "command": "npx",
@@ -1371,16 +1391,22 @@ def _make_mcp_config(cdp_port: int, worker_id: int = 0) -> dict:
                     f"--cdp-endpoint=http://localhost:{cdp_port}",
                     f"--viewport-size={vp[0]}x{vp[1]}",
                     f"--user-agent={_get_real_user_agent()}",
+                    # Default file access = workspace roots / cwd only
+                    # (official @playwright/mcp). Do not widen.
                 ],
+                "env": build_playwright_mcp_env(base_env),
             },
             "gmail": {
                 "command": "npx",
                 # Pinned: this package holds the Gmail OAuth tokens. 1.1.11
                 # verified byte-identical to the registry tarball 2026-06-10.
                 "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp@1.1.11"],
+                "env": build_gmail_mcp_env(base_env),
             },
         }
     }
+    validate_mcp_config_secret_boundary(cfg)
+    return cfg
 
 
 # ---------------------------------------------------------------------------
@@ -2057,9 +2083,11 @@ def gen_prompt(target_url: str, min_score: int | None = None, max_score: int | N
     prompt_file = config.LOG_DIR / f"prompt_{site_slug}_{(job.get('title') or 'unknown')[:30].replace(' ', '_')}.txt"
     prompt_file.write_text(prompt, encoding="utf-8")
 
-    # Write MCP config for reference
+    # Write MCP config for reference (no secret values — path env only)
     port = BASE_CDP_PORT + worker_id
-    mcp_path = config.APP_DIR / f".mcp-apply-{worker_id}.json"
+    worker_dir = config.APPLY_WORKER_DIR / f"worker-{worker_id}"
+    worker_dir.mkdir(parents=True, exist_ok=True)
+    mcp_path = worker_dir / "mcp-apply.json"
     mcp_path.write_text(json.dumps(_make_mcp_config(port, worker_id=worker_id)), encoding="utf-8")
 
     return prompt_file
@@ -2305,24 +2333,17 @@ def run_job(job: dict, port: int, worker_id: int = 0,
     # Refresh Gmail token before writing MCP config (the MCP server doesn't auto-refresh)
     _refresh_gmail_token()
 
-    # Write per-worker MCP config (strict-mcp-config ignores global/Docker MCP)
-    mcp_config_path = config.APP_DIR / f".mcp-apply-{worker_id}.json"
-    mcp_config_path.write_text(
-        json.dumps(_make_mcp_config(port, worker_id=worker_id)), encoding="utf-8"
+    from applypilot.apply.secret_boundary import (
+        SecretBoundaryError,
+        build_apply_claude_env,
+        cleanup_apply_runtime_files,
+        redact_secrets_for_log,
+        validate_apply_claude_env,
     )
-
-    env = os.environ.copy()
-    env.pop("CLAUDECODE", None)
-    env.pop("CLAUDE_CODE_ENTRYPOINT", None)
-    # Remove ANTHROPIC_API_KEY so the subprocess uses the user's Max plan
-    # login instead of API billing. The key is loaded by config.load_env()
-    # for the Gemini/OpenAI LLM fallback chain but must NOT leak into the
-    # Claude Code subprocess — it would override interactive auth and hit
-    # "credit balance is too low" on an unfunded API account.
-    env.pop("ANTHROPIC_API_KEY", None)
 
     # worker_dir was wiped+recreated above, before build_prompt populated it.
     worker_dir = config.APPLY_WORKER_DIR / f"worker-{worker_id}"
+    mcp_config_path = worker_dir / "mcp-apply.json"
 
     update_state(worker_id, status="applying", job_title=job["title"],
                  company=job.get("site", ""), score=job.get("fit_score", 0),
@@ -2344,6 +2365,20 @@ def run_job(job: dict, port: int, worker_id: int = 0,
     proc = None
 
     try:
+        # Write per-worker MCP config inside the job-bound worker dir (WP1.2).
+        # strict-mcp-config ignores global/Docker MCP. Config contains path env
+        # only — never API keys/passwords.
+        mcp_config_path.write_text(
+            json.dumps(_make_mcp_config(port, worker_id=worker_id)), encoding="utf-8"
+        )
+
+        # WP1.2: explicit allowlist env. Do not copy os.environ.
+        # ANTHROPIC_API_KEY is never included — Claude Max login uses on-disk
+        # auth under the user profile (HOME/USERPROFILE). Fail closed on
+        # boundary errors (never fall back to broad inheritance).
+        env = build_apply_claude_env()
+        validate_apply_claude_env(env)
+
         # Least-privilege Claude boundary (WP1.1). Fail closed — never fall
         # back to bypassPermissions if settings/command construction fails.
         settings_path = worker_dir / "claude-apply-settings.json"
@@ -2643,6 +2678,12 @@ def run_job(job: dict, port: int, worker_id: int = 0,
         update_state(worker_id, status="failed", last_action=f"no result ({elapsed}s)")
         return "failed:no_result_line", duration_ms, screening_qs
 
+    except SecretBoundaryError as e:
+        duration_ms = int((time.time() - start) * 1000)
+        safe = redact_secrets_for_log(str(e))[:80]
+        add_event(f"[W{worker_id}] SECRET_BOUNDARY: {safe[:40]}")
+        update_state(worker_id, status="failed", last_action="SECRET_BOUNDARY")
+        return f"failed:secret_boundary:{safe[:100]}", duration_ms, []
     except subprocess.TimeoutExpired:
         duration_ms = int((time.time() - start) * 1000)
         elapsed = int(time.time() - start)
@@ -2651,14 +2692,20 @@ def run_job(job: dict, port: int, worker_id: int = 0,
         return "failed:timeout", duration_ms, []
     except Exception as e:
         duration_ms = int((time.time() - start) * 1000)
-        add_event(f"[W{worker_id}] ERROR: {str(e)[:40]}")
-        update_state(worker_id, status="failed", last_action=f"ERROR: {str(e)[:25]}")
-        return f"failed:{str(e)[:100]}", duration_ms, []
+        safe = redact_secrets_for_log(str(e))
+        add_event(f"[W{worker_id}] ERROR: {safe[:40]}")
+        update_state(worker_id, status="failed", last_action=f"ERROR: {safe[:25]}")
+        return f"failed:{safe[:100]}", duration_ms, []
     finally:
         with _claude_lock:
             _claude_procs.pop(worker_id, None)
         if proc is not None and proc.poll() is None:
             _kill_process_tree(proc.pid)
+        # Temporary MCP/settings runtime config — not durable application evidence.
+        cleanup_apply_runtime_files(
+            worker_dir / "mcp-apply.json",
+            worker_dir / "claude-apply-settings.json",
+        )
 
 
 # ---------------------------------------------------------------------------
